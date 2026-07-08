@@ -1,0 +1,852 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="ext-resource-dependency" content="assets/products/nirvel.png" data-resource-id="prod_nirvel">
+<meta name="ext-resource-dependency" content="assets/products/lashcolor.png" data-resource-id="prod_lashcolor">
+<meta name="ext-resource-dependency" content="assets/products/refectocil.png" data-resource-id="prod_refectocil">
+<meta name="ext-resource-dependency" content="assets/products/iuver.png" data-resource-id="prod_iuver">
+<meta name="ext-resource-dependency" content="assets/products/levissime.png" data-resource-id="prod_levissime">
+<template id="__bundler_thumbnail" data-bg-color="#f2f0eb">
+  <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1200" height="800" fill="#f2f0eb"/>
+    <g transform="translate(600 400)" fill="none" stroke="#004522" stroke-width="14" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M-130 -80 L-100 100 L100 100 L130 -80 Z"/>
+      <path d="M-160 -80 L160 -80"/>
+      <path d="M-70 -80 C-70 -140, 70 -140, 70 -80"/>
+      <circle cx="-40" cy="160" r="22" fill="#004522"/>
+      <circle cx="60" cy="160" r="22" fill="#004522"/>
+    </g>
+    <text x="600" y="640" text-anchor="middle" font-family="Montserrat, sans-serif" font-weight="700" font-size="46" fill="#004522" letter-spacing="2">КОРЗИНА</text>
+  </svg>
+</template>
+<script src="assets/vendor/react.production.min.js"></script>
+<script src="assets/vendor/react-dom.production.min.js"></script>
+<script src="assets/support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="styles.css">
+</helmet>
+
+<div data-dc-s="{{ pageStyle }}">
+  <div data-dc-s="{{ containerStyle }}">
+
+    <!-- Индикатор брейкпоинта и переключатель статуса мастера -->
+    <div class="u-style-1">
+      <div data-dc-s="{{ bpBadgeStyle }}">{{ bpLabel }}</div>
+      <div class="u-style-2">
+        <span class="u-style-3">Статус мастера</span>
+        <select value="{{ currentStatus }}" onChange="{{ onStatusChange }}" data-dc-s="{{ statusSelectStyle }}">
+          <sc-for list="{{ statusOptions }}" as="o" hint-placeholder-count="4">
+            <option value="{{ o.id }}">{{ o.label }}</option>
+          </sc-for>
+        </select>
+      </div>
+    </div>
+
+    <!-- Хлебные крошки -->
+    <nav class="u-style-4">
+      <span class="u-style-5">Главная</span>
+      <span class="u-style-6">/</span>
+      <span class="u-style-7">Корзина</span>
+    </nav>
+
+    <!-- Заголовок страницы -->
+    <div class="u-style-8">
+      <h1 data-dc-s="{{ h1Style }}">Корзина</h1>
+      <span class="u-style-9">Позиций: <strong class="u-style-10">{{ totalPositions }}</strong></span>
+    </div>
+
+    <!-- Плашка статуса мастера -->
+    <sc-if value="{{ showStatusBand }}" hint-placeholder-val="{{ true }}">
+    <div data-dc-s="{{ statusBandStyle }}">
+      <span class="u-style-11">Мой статус</span>
+      <div data-dc-s="{{ statusDividerStyle }}"></div>
+      <div data-dc-s="{{ statusVipGroupStyle }}">
+        <span class="u-style-12">{{ statusName }}</span>
+        <sc-for list="{{ statusBadges }}" as="b" hint-placeholder-count="2">
+          <span class="u-style-13">{{ b.t }}</span>
+        </sc-for>
+      </div>
+      <span title="Скидка зависит от категории товара и выбранного бренда" data-dc-s="{{ statusInfoStyle }}">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 23c6.075 0 11-4.925 11-11S18.075 1 12 1 1 5.925 1 12s4.925 11 11 11Zm0-16.6a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2Zm-1.45 5.45a1.45 1.45 0 0 1 2.9 0v4.2a1.45 1.45 0 0 1-2.9 0v-4.2Z"></path></svg>
+      </span>
+    </div>
+    </sc-if>
+
+    <!-- Информационное сообщение -->
+    <div class="u-style-14">
+      <div role="alert" class="ds-alert-info">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="ds-alert-icon"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"></circle><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+        <div class="ds-alert-body">В вашей корзине есть товары из разных категорий — они рассчитываются отдельно по своим правилам цены.</div>
+      </div>
+    </div>
+
+    <!-- Двухколоночная сетка -->
+    <div data-dc-s="{{ mainGridStyle }}">
+
+      <!-- Левая колонка -->
+      <div class="u-style-15">
+
+        <!-- Вкладки и карточка товаров -->
+        <div data-dc-s="{{ tabsSectionStyle }}">
+
+          <!-- Строка вкладок, отдельно от подложки карточки -->
+          <div data-dc-s="{{ tabsRowStyle }}">
+            <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="3">
+              <div onClick="{{ tab.onSelect }}" data-dc-s="{{ tab.tabStyle }}">
+                <span data-dc-s="{{ tab.nameStyle }}">{{ tab.name }}</span>
+                <span data-dc-s="{{ tab.countStyle }}">{{ tab.countText }}</span>
+                <span data-dc-s="{{ tab.sumStyle }}">{{ tab.sumText }}</span>
+                <label onClick="{{ tab.stop }}" data-dc-s="{{ tab.checkboxLabelStyle }}">
+                  <input type="checkbox" checked="{{ tab.checked }}" onChange="{{ tab.onToggleAll }}" class="u-style-18" />
+                  <span data-dc-s="{{ tab.cbBoxStyle }}">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" data-dc-s="{{ tab.cbCheckStyle }}"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  </span>
+                </label>
+              </div>
+            </sc-for>
+          </div>
+
+          <!-- Подложка карточки товаров: шкала скидки + строки товаров -->
+          <div data-dc-s="{{ tabsCardStyle }}">
+
+          <!-- Шкала скидки за объём, только для первой вкладки -->
+          <sc-if value="{{ showVolumeBar }}" hint-placeholder-val="{{ false }}">
+            <div class="u-style-21">
+              <div data-dc-s="{{ volumeOuterStyle }}">
+                <!-- Статус скидки -->
+                <div data-dc-s="{{ volumeStatusCellStyle }}">
+                  <div class="u-style-22">
+                    <span class="u-style-23">Скидка за объём</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" class="u-style-24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 23c6.075 0 11-4.925 11-11S18.075 1 12 1 1 5.925 1 12s4.925 11 11 11Zm0-16.6a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2Zm-1.45 5.45a1.45 1.45 0 0 1 2.9 0v4.2a1.45 1.45 0 0 1-2.9 0v-4.2Z"></path></svg>
+                  </div>
+                  <span class="u-style-25">{{ volumeStatusText }}</span>
+                </div>
+                <!-- Пороги прогресса -->
+                <div data-dc-s="{{ volumeTiersWrapStyle }}">
+                  <sc-for list="{{ volumeSegments }}" as="seg" hint-placeholder-count="5">
+                    <div data-dc-s="{{ seg.cellStyle }}">
+                      <span data-dc-s="{{ seg.amountStyle }}">{{ seg.amount }}</span>
+                      <div data-dc-s="{{ seg.barWrapStyle }}">
+                        <div data-dc-s="{{ seg.barTrackStyle }}">
+                          <div data-dc-s="{{ seg.barFillStyle }}"></div>
+                        </div>
+                      </div>
+                      <span data-dc-s="{{ seg.percentStyle }}">{{ seg.percent }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-if>
+
+          <!-- Строки товаров и необязательные заголовки групп -->
+          <sc-for list="{{ rows }}" as="row" hint-placeholder-count="3">
+            <sc-if value="{{ row.isHeader }}" hint-placeholder-val="{{ false }}">
+              <div data-dc-s="{{ row.headerStyle }}">
+                <span class="u-style-26">{{ row.title }}</span>
+              </div>
+            </sc-if>
+            <sc-if value="{{ row.isProduct }}" hint-placeholder-val="{{ true }}">
+              <div data-dc-s="{{ row.cardStyle }}">
+                <label data-dc-s="{{ row.checkboxWrapStyle }}">
+                  <input type="checkbox" checked="{{ row.checked }}" onChange="{{ row.onToggle }}" class="u-style-18" />
+                  <span data-dc-s="{{ row.cbBoxStyle }}">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" data-dc-s="{{ row.cbCheckStyle }}"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  </span>
+                </label>
+                <div data-dc-s="{{ row.imgStyle }}"></div>
+                <div data-dc-s="{{ row.nameBlockStyle }}">
+                  <span data-dc-s="{{ row.nameStyle }}">{{ row.name }}</span>
+                  <span data-dc-s="{{ row.metaStyle }}">{{ row.meta }}</span>
+                </div>
+                <div data-dc-s="{{ row.rightColStyle }}">
+                  <div data-dc-s="{{ row.priceBlockStyle }}">
+                    <span data-dc-s="{{ row.lineStyle }}">{{ row.lineText }}</span>
+                    <sc-if value="{{ row.showOld }}" hint-placeholder-val="{{ false }}">
+                      <span class="u-style-27">{{ row.oldText }}</span>
+                    </sc-if>
+                  </div>
+                  <span data-dc-s="{{ row.priceTypeStyle }}">{{ row.priceTypeText }}</span>
+                  <div data-dc-s="{{ row.qtyBlockStyle }}">
+                    <span data-dc-s="{{ row.unitSpacerStyle }}">{{ row.perUnitSpacerTop }}</span>
+                    <div class="u-style-28">
+                      <button type="button" aria-label="Уменьшить" onClick="{{ row.onDec }}" disabled="{{ row.atMin }}" data-dc-s="{{ row.stepBtnDecStyle }}" data-dc-hover="background:#EDEBE9 !important;z-index:2;" data-dc-active="transform:scale(0.94);">−</button>
+                      <input type="text" inputmode="numeric" value="{{ row.qty }}" onChange="{{ row.onQtyInput }}" onFocus="{{ row.onFocusSelect }}" data-dc-s="{{ qtyInputStyle }}" data-dc-focus="border-color:var(--green-accent);z-index:2;" />
+                      <button type="button" aria-label="Увеличить" onClick="{{ row.onInc }}" disabled="{{ row.atMax }}" data-dc-s="{{ row.stepBtnIncStyle }}" data-dc-hover="background:#EDEBE9 !important;z-index:2;" data-dc-active="transform:scale(0.94);">+</button>
+                    </div>
+                    <span data-dc-s="{{ row.perUnitStyle }}">{{ row.perUnitText }}</span>
+                  </div>
+                </div>
+                <span class="u-style-29">
+                  <div role="button" aria-label="Удалить" onClick="{{ row.onRemove }}" class="u-style-30" data-dc-hover="background:#edebe9;" data-dc-active="transform:scale(0.92);">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="u-style-31"><path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"></path></svg>
+                  </div>
+                </span>
+              </div>
+            </sc-if>
+          </sc-for>
+
+          <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+            <div class="u-style-32">В этой группе пока нет товаров.</div>
+          </sc-if>
+          </div>
+        </div>
+
+        <!-- Блок допродажи -->
+        <sc-if value="{{ showUpsell }}" hint-placeholder-val="{{ true }}">
+          <div data-dc-s="{{ upsellCardStyle }}">
+            <div data-dc-s="{{ upsellHeaderStyle }}">
+              <div class="u-style-33">
+                <div class="u-style-34">
+                  <span class="u-style-35">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l8 4.6v8.8L12 21l-8-4.6V7.6L12 3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></path><path d="M4 7.6L12 12l8-4.4M12 12v9" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"></path></svg>
+                  </span>
+                  <h2 data-dc-s="{{ upsellH2Style }}">Для процедуры вам понадобятся товары</h2>
+                </div>
+                <p data-dc-s="{{ upsellDescStyle }}">Вы добавили товар для окрашивания. Обычно для полноценной процедуры берут:<br><strong class="u-style-36">оксид, перчатки и уход после окрашивания.</strong></p>
+              </div>
+              <div data-dc-s="{{ upsellProgressWrapStyle }}">
+                <div class="u-style-37">
+                  <span class="u-style-39">{{ upsellProgressText }}</span>
+                </div>
+                <div class="u-style-40">
+                  <div data-dc-s="{{ upsellBarFillStyle }}"></div>
+                </div>
+              </div>
+            </div>
+            <div data-dc-s="{{ upsellGridStyle }}">
+              <sc-for list="{{ upsell }}" as="u" hint-placeholder-count="4">
+                <div data-dc-s="{{ u.cardStyle }}">
+                  <div data-dc-s="{{ u.imgStyle }}"></div>
+                  <div class="u-style-41">
+                    <span data-dc-s="{{ u.nameStyle }}">{{ u.name }}</span>
+                    <span class="u-style-42">{{ u.price }}</span>
+                  </div>
+                  <button type="button" disabled="{{ u.added }}" onClick="{{ u.onAdd }}" data-dc-s="{{ u.btnStyle }}" data-dc-hover="{{ u.btnHover }}" data-dc-active="transform:scale(0.97);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" data-dc-s="{{ u.btnIconStyle }}"><path d="{{ u.btnIconPath }}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg><span data-dc-s="{{ u.btnLabelStyle }}">{{ u.btnLabel }}</span></button>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+      </div>
+
+      <!-- Правая колонка — итог заказа -->
+      <div data-dc-s="{{ summaryColStyle }}">
+        <div class="u-style-43">
+          <h2 class="u-style-44">Итог</h2>
+          <div class="u-style-45">
+            <div class="u-style-46">
+              <div class="u-style-47"><span class="u-style-48">Товары</span><span class="u-style-49">{{ sum.goods }}</span></div>
+              <sc-for list="{{ regDiscLines }}" as="d" hint-placeholder-count="1">
+                <div class="u-style-47"><span class="u-style-48">{{ d.label }}</span><span class="u-style-50">{{ d.amount }}</span></div>
+              </sc-for>
+            </div>
+            <div class="u-style-51"></div>
+            <div class="u-style-46">
+              <div class="u-style-47"><span class="u-style-48">Уценённые товары</span><span class="u-style-49">{{ sum.markdown }}</span></div>
+              <div class="u-style-47"><span class="u-style-48">Уценка</span><span class="u-style-50">{{ sum.markdownDisc }}</span></div>
+            </div>
+            <div class="u-style-51"></div>
+            <div class="u-style-46">
+              <div class="u-style-47"><span class="u-style-48">Товары по акции</span><span class="u-style-49">{{ sum.promo }}</span></div>
+              <div class="u-style-47"><span class="u-style-48">Выгода</span><span class="u-style-50">{{ sum.promoDisc }}</span></div>
+            </div>
+          </div>
+          <div class="u-style-52"></div>
+          <div class="u-style-53">
+            <span class="u-style-54">К оплате</span>
+            <span class="u-style-55">{{ sum.total }}</span>
+          </div>
+          <div class="u-style-56">
+            <span class="u-style-57">Общая экономия</span>
+            <span class="u-style-58">{{ sum.savings }}</span>
+          </div>
+          <button type="button" class="ds-btn-primary-lg"><span class="u-style-59"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="u-style-60"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle><path d="M8.5 12.2l2.4 2.4 4.6-4.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>Оформить заказ</span></button>
+        </div>
+        <div class="u-style-61">
+          <div class="u-style-62">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="u-style-63"><path d="M3 13V6a1 1 0 011-1h10v8M14 9h4l3 4v3h-2M3 16h2m12 0h-3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="7.5" cy="16.5" r="1.8" stroke="currentColor" stroke-width="1.8"></circle><circle cx="17.5" cy="16.5" r="1.8" stroke="currentColor" stroke-width="1.8"></circle></svg>
+            <div class="u-style-64">
+              <span class="u-style-65">Для вашего заказа предусмотрена бесплатная доставка по Москве и МО</span>
+              <span class="u-style-66">Доставка по России и в страны ЕАЭС — по тарифу</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1340,&quot;height&quot;:1500},&quot;showUpsell&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;comfortable&quot;,&quot;compact&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;\&quot;comfortable\&quot; | \&quot;compact\&quot;&quot;}}">
+class Component extends DCLogic {
+  // Каталог корзины: товары разделены на три бизнес-группы.
+  // тип группы определяет правила расчёта: обычные товары идут со скидками,
+  // уценённые товары считаются по старой и новой цене, акционные группируются по акции.
+  catalog = [
+    { id: "regular", name: "Обычные товары", kind: "regular", items: [
+      { id: "r1", name: "P-06 Nirvel Pastel ArtX 100 мл Краситель для волос, оттенок - Серебристый", art: "IGRO-5750", brand: "Nirvel", retail: 1500, unit: 1350, qty: 4, img: "nirvel", limited: true, priceLabel: "Цена мастера (Лига II)" },
+      { id: "r2", name: "Color Краска для бровей и ресниц 15 мл, оттенок натуральный КОРИЧНЕВЫЙ", art: "IGRO-9145", brand: "Lash Color", retail: 800, unit: 720, qty: 1, img: "lashcolor", priceLabel: "Цена мастера (Лига II)" },
+      { id: "r3", name: "Краситель для окрашивания бровей и ресниц RefectoCil № 3.1, светло-коричневый, 15 мл", art: "IGRO-9146", brand: "RefectoCil", retail: 500, unit: 450, qty: 2, img: "refectocil", priceLabel: "Цена мастера (Лига II)" },
+    ] },
+    { id: "markdown", name: "Уценённые товары", kind: "markdown", items: [
+      { id: "m1", name: "Маска для волос восстанавливающая, 500 мл", art: "IGRO-2201", brand: "Kapous", old: 1400, unit: 980, qty: 1, img: "levissime", priceLabel: "Уценённый товар" },
+      { id: "m2", name: "Сыворотка для секущихся кончиков, 100 мл", art: "IGRO-2245", brand: "Concept", old: 560, unit: 392, qty: 2, img: "iuver", priceLabel: "Уценённый товар" },
+      { id: "m3", name: "Тоник-кондиционер для волос, 250 мл", art: "IGRO-2290", brand: "Levissime", old: 470, unit: 329, qty: 1, img: "lashcolor", priceLabel: "Уценённый товар" },
+      { id: "m4", name: "Бальзам-уход после окрашивания, 200 мл", art: "IGRO-2310", brand: "Kapous", old: 710, unit: 497, qty: 1, img: "iuver", priceLabel: "Уценённый товар" },
+    ] },
+    { id: "promo", name: "Товары по акции", kind: "promo", items: [
+      { id: "p1", name: "Шампунь восстанавливающий 1000 мл", art: "IGRO-5750", brand: "Nirvel", promoGroup: "Акция 10+2 Nirvel", unit: 416.67, list: 500, qty: 12, img: "nirvel", priceLabel: "Товар по акции" },
+      { id: "p2", name: "Шампунь восстанавливающий 1000 мл", art: "IGRO-5750", brand: "Levissime", promoGroup: "Акция 20% LevisSime", unit: 2400, list: 3000, qty: 2, img: "levissime", priceLabel: "Товар по акции" },
+      { id: "p3", name: "Шампунь восстанавливающий 500 мл", art: "IGRO-5750", brand: "Levissime", promoGroup: "Акция 20% LevisSime", unit: 1200, list: 1500, qty: 2, img: "levissime", priceLabel: "Товар по акции" },
+    ] },
+  ];
+
+  // Пороги накопительной скидки за объём.
+  // Считаются только выбранные обычные товары, сумма берётся до скидок.
+  discountTiers = [
+    { threshold: 5000, label: "5%" },
+    { threshold: 7000, label: "7%" },
+    { threshold: 10000, label: "10%" },
+    { threshold: 20000, label: "15%" },
+    { threshold: 100000, label: "25%" },
+  ];
+
+  // Статусы мастера.
+  // базовая скидка применяется к обычным товарам, повышенная — к брендовым товарам.
+  // множитель используется для сценария РРЦ: розничная база в 2 раза выше мастерской.
+  statuses = [
+    { id: "rrc", name: "РРЦ", base: 0, brand: 0, mult: 2, noBand: true, priceRoot: "РРЦ", noDiscLabel: "Реком.\nрозничная цена", optLabel: "Не мастер (РРЦ)", badges: [] },
+    { id: "master", name: "Мастер", base: 0, brand: 0, mult: 1, noBand: true, priceRoot: "Цена мастера", noDiscLabel: "Цена мастера", optLabel: "Мастер (нет скидки)", badges: [] },
+    { id: "liga2", name: "Лига II", base: 10, brand: 10, optLabel: "Лига II (скидка 10%)", badges: [{ t: "Скидка 10%" }] },
+    { id: "liga1", name: "Лига I", base: 15, brand: 15, optLabel: "Лига I (скидка 15%)", badges: [{ t: "Скидка 15%" }] },
+    { id: "vip", name: "VIP", base: 15, brand: 20, optLabel: "VIP (скидка 15% бренды 20%)", badges: [{ t: "Скидка 15%" }, { t: "Бренды 20%" }] },
+    { id: "supervip", name: "Супер VIP", base: 15, brand: 25, optLabel: "Супер VIP (скидка 15% бренды 25%)", badges: [{ t: "Скидка 15%" }, { t: "Бренды 25%" }] },
+  ];
+
+  // Рекомендованные товары для допродажи.
+  // признак наличия в корзине означает, что товар уже считается частью комплекта.
+  upsellData = [
+    { key: "gamma", name: "Краска для волос Gamma 7.1", sub: "Основной продукт процедуры", price: 640, img: "refectocil", inCart: true },
+    { key: "oxide", name: "Оксид 3% Gamma, 1000 мл", sub: "Нужен для смешивания с красителем", price: 520, img: "iuver", inCart: false },
+    { key: "gloves", name: "Перчатки нитриловые, размер M", sub: "Расходник для мастера", price: 390, img: "lashcolor", inCart: false },
+    { key: "shampoo", name: "Шампунь после окрашивания", sub: "Завершение процедуры и уход", price: 860, img: "levissime", inCart: false },
+  ];
+
+  bpOf = (w) => (w >= 1280 ? "desktop" : w >= 768 ? "tablet" : "mobile");
+
+  state = (() => {
+    const qty = {}, checked = {};
+    // При инициализации все товары выбраны, а количество берётся из каталога.
+    this.catalog.forEach(g => g.items.forEach(it => { qty[it.id] = it.qty; checked[it.id] = true; }));
+    const w = (typeof window !== "undefined") ? window.innerWidth : 1340;
+    const bp = w >= 1280 ? "desktop" : w >= 768 ? "tablet" : "mobile";
+    return { qty, checked, removed: {}, activeGroup: "regular", added: {}, bp, narrow: w < 540, status: "vip" };
+  })();
+
+  componentDidMount() {
+    this._onResize = () => {
+      const w = window.innerWidth;
+      const bp = this.bpOf(w);
+      const narrow = w < 540;
+      if (bp !== this.state.bp || narrow !== this.state.narrow) this.setState({ bp, narrow });
+    };
+    window.addEventListener("resize", this._onResize);
+    this._onResize();
+  }
+  componentWillUnmount() {
+    if (this._onResize) window.removeEventListener("resize", this._onResize);
+  }
+
+  fmt = (n) => {
+    const r = Math.round(n * 100) / 100;
+    const frac = Math.round(r * 100) % 100 !== 0;
+    return r.toLocaleString("ru-RU", { minimumFractionDigits: frac ? 2 : 0, maximumFractionDigits: 2 }) + "\u00A0\u20BD";
+  };
+  neg = (n) => (n > 0 ? "\u2212" : "") + this.fmt(n);
+
+  // Пользовательские действия в корзине: изменить количество,
+  // выбрать/снять товар или скрыть его из текущего списка.
+  setQty = (id, v) => this.setState(s => ({ qty: { ...s.qty, [id]: v } }));
+  toggle = (id, c) => this.setState(s => ({ checked: { ...s.checked, [id]: c } }));
+  remove = (id) => this.setState(s => ({ removed: { ...s.removed, [id]: true } }));
+
+  renderVals() {
+    const { qty, checked, removed, activeGroup, added } = this.state;
+    const fmt = this.fmt, neg = this.neg;
+    const q = (it) => qty[it.id] ?? it.qty;
+    const cbBox = (on, size) => ({ display: "inline-flex", alignItems: "center", justifyContent: "center", width: size || 20, height: size || 20, flex: "none", borderRadius: "var(--radius-xs)", border: "1px solid " + (on ? "var(--green-accent)" : "var(--hairline)"), backgroundColor: on ? "var(--green-accent)" : "var(--canvas)", transition: "border-color 0.2s, background-color 0.2s" });
+    const cbCheck = (on) => ({ opacity: on ? 1 : 0, transition: "opacity var(--duration-fast) ease" });
+
+    // --- брейкпоинт ---
+    const bp = this.state.bp || "desktop";
+    const M = bp === "mobile", T = bp === "tablet", D = bp === "desktop";
+    const narrow = !!this.state.narrow;
+    const wrapRow = M && narrow; // переносим строку товара только на ширине меньше примерно пятисот сорока пикселей
+
+    // --- объекты стилей макета ---
+    const pageStyle = { background: "#F9F9F9", minHeight: "100vh", fontFamily: "var(--font-body)", color: "var(--ink)", letterSpacing: "var(--tracking-normal)" };
+    const containerStyle = { maxWidth: D ? "1340px" : "100%", margin: "0 auto", padding: M ? "18px 16px 48px" : T ? "32px 32px 56px" : "40px 48px 72px" };
+    const h1Style = { fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: M ? "26px" : T ? "34px" : "40px", lineHeight: 1.1, letterSpacing: "var(--tracking-tight)", color: "var(--green-primary)", margin: 0 };
+    const statusBandStyle = { display: "flex", flexDirection: M ? "column" : "row", alignItems: M ? "flex-start" : "center", gap: M ? "10px" : "28px", background: "var(--green-house)", borderRadius: "var(--radius-md)", boxShadow: "var(--shadow-card)", padding: M ? "14px 16px" : "22px 28px", marginBottom: "20px" };
+    const statusDividerStyle = { width: "1px", height: "34px", background: "rgba(255,255,255,0.16)", flex: "none", display: M ? "none" : "block" };
+    const statusVipGroupStyle = { display: "flex", alignItems: "center", gap: M ? "8px" : "16px", flexWrap: "wrap", flex: M ? "none" : "1", width: M ? "100%" : "auto" };
+    const statusInfoStyle = { display: M ? "none" : "inline-flex", alignItems: "center", justifyContent: "center", color: "rgba(211,232,225,0.5)", cursor: "help", flex: "none" };
+    const mainGridStyle = { display: "grid", gridTemplateColumns: D ? "1fr 340px" : "1fr", gap: M ? "16px" : T ? "24px" : "28px", alignItems: "start" };
+    const summaryColStyle = { position: D ? "sticky" : "static", top: D ? "24px" : "auto", display: "flex", flexDirection: "column", gap: "16px" };
+
+    const bpLabel = M ? "Mobile · 320–767" : T ? "Tablet · 768–1279" : "Desktop · 1280+";
+    const bpBadgeStyle = { display: "inline-flex", alignItems: "center", alignSelf: "flex-start", fontSize: "var(--text-micro)", fontWeight: "var(--weight-bold)", letterSpacing: "0.4px", textTransform: "uppercase", color: "var(--green-primary)", background: "var(--green-light)", border: "1px solid var(--green-accent)", borderRadius: "var(--radius-full)", padding: "4px 12px" };
+
+    // макет шкалы скидки за объём
+    const volumeOuterStyle = { display: "flex", flexDirection: M ? "column" : "row", border: "1px solid var(--hairline-faint)", borderRadius: "var(--radius-sm)", overflow: "hidden", minHeight: M ? "auto" : "52px" };
+    const volumeStatusCellStyle = { flex: "none", minWidth: M ? "auto" : "160px", width: M ? "100%" : "auto", padding: "8px 14px", background: "var(--surface-soft)", borderRight: M ? "none" : "1px solid var(--hairline-faint)", borderBottom: M ? "1px solid var(--hairline-faint)" : "none", display: "flex", flexDirection: M ? "row" : "column", alignItems: "center", justifyContent: "center", gap: M ? "8px" : "2px" };
+    const volumeTiersWrapStyle = { display: "flex", flex: 1, minWidth: 0, alignItems: "flex-end", gap: M ? "8px" : "12px", padding: M ? "10px 12px" : "12px 16px" };
+
+    // макет компактного блока допродажи — на мобильном подложка идёт вровень с краями экрана
+    const upsellCardStyle = { background: "var(--surface-card)", borderRadius: M ? "0" : "var(--radius-md)", boxShadow: "var(--shadow-card)", padding: M ? "16px" : "22px", marginLeft: M ? "-16px" : "0", marginRight: M ? "-16px" : "0" };
+    // вкладки теперь вынесены за пределы подложки карточки товаров: на мобильном между ними небольшой зазор, на десктопе/планшете они по-прежнему стыкуются с карточкой
+    const tabsSectionStyle = { display: "flex", flexDirection: "column", gap: M ? "10px" : "0" };
+    // подложка списка товаров — полный блид на мобильном, без вкладок внутри
+    // радиус только снизу на десктопе/планшете — верх не скруглён, чтобы не было визуального разрыва со вкладками
+    const tabsCardStyle = { background: "var(--surface-card)", borderRadius: M ? "0" : "0 0 var(--radius-md) var(--radius-md)", boxShadow: "var(--shadow-card)", overflow: "hidden", marginLeft: M ? "-16px" : "0", marginRight: M ? "-16px" : "0" };
+    // строка вкладок сама по себе, с обычным отступом контейнера на мобильном
+    const tabsRowStyle = M ? { display: "flex", gap: "8px" } : { display: "flex", gap: "0", background: "#F9F9F9", borderBottom: "1px solid var(--hairline-faint)", position: "relative" };
+    const upsellHeaderStyle = { display: "flex", flexDirection: M ? "column" : "row", alignItems: "flex-start", justifyContent: "space-between", gap: M ? "12px" : "24px", marginBottom: M ? "16px" : "18px" };
+    const upsellH2Style = { fontFamily: "var(--font-heading)", fontWeight: 800, fontSize: M ? "15px" : "18px", lineHeight: 1.15, letterSpacing: "0.03em", textTransform: "uppercase", color: "var(--green-primary)", margin: 0 };
+    const upsellDescStyle = { margin: 0, fontFamily: "var(--font-body)", fontWeight: 400, fontSize: "14px", lineHeight: 1.35, letterSpacing: "-0.16px", color: "var(--ink-soft)", maxWidth: "600px" };
+    const upsellProgressWrapStyle = { flex: "none", width: M ? "100%" : "210px", marginTop: M ? "0" : "2px" };
+    const upsellGridStyle = { display: "grid", gridTemplateColumns: M ? "1fr" : "1fr 1fr", gap: "10px" };
+
+    // --- группы товаров ---
+    // Готовим группы для вкладок: удалённые товары исключаются,
+    // сумма вкладки считается по базовой цене товара в текущей группе.
+    const groups = this.catalog.map(g => {
+      const items = g.items.filter(it => !removed[it.id]);
+      const sum = items.reduce((a, it) => a + Math.round(it.unit * q(it)), 0);
+      return { ...g, items, sum };
+    });
+
+    const activeG = groups.find(g => g.id === activeGroup) || groups[0];
+    const regularG = groups.find(g => g.id === "regular") || groups[0];
+
+    // --- статус мастера и модель скидки для позиции, только обычные товары ---
+    // Выбранный статус мастера влияет только на обычные товары.
+    // Брендовыми считаются Нирвел и Лэш Колор: для них может применяться брендовая скидка.
+    const statuses = this.statuses;
+    const curStatus = this.state.status || "vip";
+    const cur = statuses.find(s => s.id === curStatus) || statuses[0];
+    const isBrandItem = (it) => it.brand === "Nirvel" || it.brand === "Lash Color";
+    const statusPctOf = (it) => (isBrandItem(it) ? cur.brand : cur.base);
+
+    // --- вкладки ---
+    // Мобильный дизайн: отдельные карточки-вкладки с зазором, имя+счётчик в первой строке,
+    // сумма и чек-бокс выбора всей группы — во второй. Десктоп/планшет — прежний сросшийся вид.
+    const tabShortNames = { regular: "Обычные", markdown: "Уценка", promo: "Акции" };
+    const tabs = groups.map((g, gi) => {
+      const active = g.id === activeGroup;
+      const isFirst = gi === 0;
+      const isLast = gi === groups.length - 1;
+      const allChecked = g.items.length > 0 && g.items.every(it => checked[it.id]);
+      return {
+        name: M ? (tabShortNames[g.id] || g.name) : g.name,
+        countText: M ? String(g.items.length) : (g.items.length + " шт."),
+        sumText: fmt(g.sum),
+        checked: allChecked,
+        cbBoxStyle: M ? cbBox(allChecked, 20) : cbBox(allChecked),
+        cbCheckStyle: cbCheck(allChecked),
+        checkboxLabelStyle: M
+          ? { display: "inline-flex", cursor: "pointer", position: "relative", gridArea: "check", alignSelf: "end", justifySelf: "end" }
+          : { display: "inline-flex", flex: "none", cursor: "pointer", position: "relative", gridArea: "check", alignSelf: "center" },
+        nameStyle: M
+          ? { fontFamily: "var(--font-heading)", fontWeight: "var(--weight-semibold)", fontSize: "13px", lineHeight: 1.2, color: "var(--ink)", gridArea: "name", alignSelf: "start", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }
+          : { fontFamily: "var(--font-heading)", fontWeight: "var(--weight-bold)", fontSize: "13px", lineHeight: 1.25, color: "var(--ink)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", minWidth: 0, gridArea: "name", alignSelf: "center" },
+        countStyle: M
+          ? { fontFamily: "var(--font-body)", fontWeight: "var(--weight-bold)", fontSize: "13px", lineHeight: 1.2, color: "var(--green-accent)", gridArea: "count", alignSelf: "start", justifySelf: "end" }
+          : { fontWeight: "var(--weight-bold)", fontSize: "13px", color: "var(--ink)", whiteSpace: "nowrap", gridArea: "count", alignSelf: "start", justifySelf: "end" },
+        sumStyle: M
+          ? { fontFamily: "var(--font-heading)", fontWeight: "var(--weight-bold)", fontSize: "13px", lineHeight: 1.2, letterSpacing: "-0.16px", color: "var(--ink)", gridArea: "sum", alignSelf: "end" }
+          : { fontFamily: "var(--font-heading)", fontWeight: "var(--weight-bold)", fontSize: "13px", color: "var(--ink)", whiteSpace: "nowrap", gridArea: "sum", alignSelf: "end", justifySelf: "end" },
+        tabStyle: M ? {
+          flex: 1,
+          minWidth: 0,
+          height: "62px",
+          boxSizing: "border-box",
+          display: "grid",
+          gridTemplateColumns: "1fr auto",
+          gridTemplateRows: "1fr 1fr",
+          gridTemplateAreas: "\"name count\" \"sum check\"",
+          columnGap: "8px",
+          padding: "8px 12px",
+          borderRadius: "var(--radius-sm)",
+          border: "1px solid #D4D4D4",
+          borderTop: active ? "2px solid var(--green-accent)" : "1px solid #D4D4D4",
+          background: active ? "#fff" : "#EDEBE9",
+          cursor: "pointer",
+          transition: "background 0.15s ease",
+        } : {
+          flex: 1,
+          minWidth: 0,
+          display: "grid",
+          gridTemplateColumns: "auto minmax(0,1fr) auto",
+          gridTemplateRows: "auto auto",
+          gridTemplateAreas: "\"check name count\" \"check name sum\"",
+          columnGap: "10px",
+          rowGap: "2px",
+          padding: "12px 16px",
+          cursor: "pointer",
+          background: active ? "#fff" : "#edebe9",
+          borderTop: active ? "2px solid var(--green-accent)" : "1px solid var(--hairline-faint)",
+          borderLeft: isFirst ? "1px solid var(--hairline-faint)" : "1px solid #F9F9F9",
+          borderRight: isLast ? "1px solid var(--hairline-faint)" : "1px solid #F9F9F9",
+          borderBottom: active ? "1px solid #fff" : "1px solid var(--hairline-faint)",
+          borderTopLeftRadius: isFirst ? "var(--radius-sm)" : "0",
+          borderTopRightRadius: isLast ? "var(--radius-sm)" : "0",
+          marginBottom: active ? "-1px" : "0",
+          position: "relative",
+          zIndex: active ? 2 : 0,
+          transition: "background 0.15s ease",
+        },
+        onSelect: () => this.setState({ activeGroup: g.id }),
+        stop: (e) => { if (e && e.stopPropagation) e.stopPropagation(); },
+        onToggleAll: (e) => { const c = e.target.checked; this.setState(s => {
+          const nc = { ...s.checked };
+          g.items.forEach(it => { nc[it.id] = c; });
+          return { checked: nc, activeGroup: g.id };
+        }); },
+      };
+    });
+
+    // --- прогресс скидки за объём, первая вкладка ---
+    // Накопительная скидка считается по розничной сумме выбранных обычных товаров
+    // до применения статусных или брендовых скидок.
+    const regRetailSum = regularG.items.reduce((acc, it) => acc + (checked[it.id] ? (it.retail != null ? it.retail : it.unit) * q(it) : 0), 0);
+    const tiers = this.discountTiers;
+    // Индекс активного порога — первый ещё не достигнутый порог; он подсвечивает текущий сегмент прогресса.
+    const activeIdx = tiers.findIndex(t => regRetailSum < t.threshold);
+    // Применяемая объёмная скидка — самый высокий достигнутый порог.
+    let activeTierLabel = null;
+    for (let i = tiers.length - 1; i >= 0; i--) {
+      if (regRetailSum >= tiers[i].threshold) { activeTierLabel = tiers[i].label; break; }
+    }
+    const vPct = activeTierLabel ? parseInt(activeTierLabel, 10) : 0;
+    // Правило выбора скидки для каждой позиции:
+    // товар получает большую из двух скидок — объёмную или статусную.
+    // При равенстве скидка считается объёмной только в смешанной корзине,
+    // где есть хотя бы один товар со статусной скидкой выше объёмной.
+    let nStatG = 0, nReg = 0;
+    regularG.items.forEach(it => {
+      if (!checked[it.id]) return;
+      nReg++;
+      if (statusPctOf(it) > vPct) nStatG++;
+    });
+    const tieToVolume = nStatG >= 1;
+    const sourceIsVolume = (it) => {
+      if (vPct <= 0) return false;
+      const s = statusPctOf(it);
+      if (vPct > s) return true;
+      if (s > vPct) return false;
+      return tieToVolume; // точное равенство
+    };
+    let nVolSrc = 0;
+    regularG.items.forEach(it => { if (checked[it.id] && sourceIsVolume(it)) nVolSrc++; });
+    // Текст статуса показывает, применяется ли объёмная скидка ко всем,
+    // только к части обычных товаров или не применяется совсем.
+    let volumeStatusText;
+    if (vPct === 0 || nReg === 0) volumeStatusText = "не применена";
+    else if (nVolSrc === nReg) volumeStatusText = vPct + "% \u2014 применена";
+    else if (nVolSrc >= 1) volumeStatusText = vPct + "% \u2014 частично применена";
+    else volumeStatusText = "не применена";
+
+    // Единая функция расчёта цены обычного товара.
+    // Её используют и строки товаров, и блок итогов, чтобы суммы не расходились.
+    const statusMult = cur.mult || 1;
+    const priceRoot = cur.priceRoot || "Цена мастера";
+    const priceInfoOf = (it) => {
+      const base = (it.retail != null ? it.retail : it.unit) * statusMult;
+      const sPct = statusPctOf(it);
+      const useVol = sourceIsVolume(it);
+      const apPct = useVol ? vPct : sPct;
+      const unitPrice = base * (1 - apPct / 100);
+      let label;
+      if (useVol) label = priceRoot + " (Объём -" + vPct + "%)";
+      else if (sPct > 0) label = priceRoot + " (" + cur.name + " -" + sPct + "%)";
+      else label = cur.noDiscLabel || priceRoot;
+      return { base, sPct, useVol, apPct, unitPrice, label };
+    };
+
+    const volumeSegments = tiers.map((t, i) => {
+      const prev = i === 0 ? 0 : tiers[i - 1].threshold;
+      const achieved = regRetailSum >= t.threshold;
+      const isActive = i === activeIdx;
+      const isLast = i === tiers.length - 1;
+      // финальный порог остаётся крупным после достижения, иначе крупным будет только текущий сегмент
+      const isBig = isActive || (isLast && achieved);
+      // применённый порог — самый высокий достигнутый: его процент тёмно-зелёный, достигнутые левее — серые
+      const isApplied = achieved && (isLast || regRetailSum < tiers[i + 1].threshold);
+      // заполнение активного сегмента показывает положение суммы между началом и концом порога
+      const fillPct = achieved ? 100 : (isActive ? Math.max(0, Math.min(100, ((regRetailSum - prev) / (t.threshold - prev)) * 100)) : 0);
+      return {
+        amount: fmt(t.threshold),
+        percent: t.label,
+        // активный сегмент отображается шире достигнутых и будущих сегментов
+        cellStyle: { display: "flex", flexDirection: "column", alignItems: "center", gap: "5px", flexGrow: isBig ? 3 : 1, flexShrink: 1, flexBasis: 0, minWidth: M ? "46px" : "56px", transition: "flex-grow 0.35s ease" },
+        // достигнутые пороги тёмные, недостигнутые и неактивные — светло-серые
+        amountStyle: { fontFamily: "var(--font-body)", fontWeight: 700, fontSize: M ? "12px" : "13px", lineHeight: 1, letterSpacing: "var(--tracking-tight)", color: achieved ? "var(--ink)" : "var(--ink-faint)", whiteSpace: "nowrap", transition: "color 0.3s ease" },
+        // фиксированная полоса восемь пикселей выравнивает тонкие и толстые шкалы по центру
+        barWrapStyle: { alignSelf: "stretch", height: "8px", display: "flex", flexDirection: "column", justifyContent: "center" },
+        // дорожка всегда светлая, активная шкала толще и полностью скруглена
+        barTrackStyle: { position: "relative", alignSelf: "stretch", height: isBig ? "8px" : "4px", borderRadius: "999px", background: "var(--ceramic)", overflow: "hidden", transition: "height 0.3s ease" },
+        // незавершённый прогресс серый и становится зелёным только после достижения порога
+        barFillStyle: { position: "absolute", left: 0, top: 0, bottom: 0, width: fillPct + "%", background: achieved ? "var(--green-accent)" : "#C5C3C2", borderRadius: "999px", transition: "width 0.45s cubic-bezier(0.25,0.46,0.45,0.94), background 0.3s ease" },
+        percentStyle: { fontFamily: "var(--font-body)", fontWeight: 700, fontSize: M ? "14px" : "15px", lineHeight: 1, color: achieved ? (isApplied ? "#004522" : "#9E9E9E") : "var(--ink-faint)", transition: "color 0.3s ease" },
+      };
+    });
+
+    // --- строки товаров ---
+    // функция подготовки строки превращает товар каталога в структуру для шаблона:
+    // рассчитанная цена, старая цена, подписи, изображения и обработчики действий.
+    const dense = (this.props.density || "comfortable") === "compact";
+    const imgSize = M ? 56 : T ? 112 : 128;
+    const cardPad = M ? "14px 40px 14px 22px" : "24px 60px 24px 24px";
+    const cbLeft = "14px";
+    const cbTop = "20px";
+
+    // пользовательский счётчик количества: минус, редактируемое поле, плюс
+    const QMIN = 1, QMAX = 99;
+    const stepBtnBase = { position: "relative", width: "32px", height: "32px", display: "inline-flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-default)", background: "#F9F9F9", fontSize: "18px", lineHeight: 1, fontFamily: "var(--font-body)", padding: 0, transition: "transform 0.12s ease, border-color 0.12s ease, background 0.12s ease", flex: "none" };
+    const stepBtnHoverStyle = { background: "#edebe9", zIndex: 2 };
+    const qtyInputStyle = { position: "relative", width: "46px", height: "32px", textAlign: "center", border: "1px solid var(--border-default)", borderRadius: "0", margin: "0 -1px", fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: "var(--weight-bold)", color: "var(--ink)", background: "var(--canvas)", outline: "none", padding: "0 4px", boxSizing: "border-box", MozAppearance: "textfield" };
+
+    const makeRow = (it, borderTop) => {
+      const n = q(it);
+      const clampQ = (v) => Math.min(QMAX, Math.max(QMIN, v));
+      let unitPrice = it.unit;
+      let priceLabelText = it.priceLabel || "";
+      if (activeG.kind === "regular") {
+        const info = priceInfoOf(it);
+        unitPrice = info.unitPrice;
+        priceLabelText = info.label;
+      }
+      const lineTotal = Math.round(unitPrice * n);
+      const hasOld = it.old != null || it.list != null;
+      const oldPrice = it.old != null ? it.old : it.list;
+      const oldTotal = hasOld ? Math.round(oldPrice * n) : 0;
+      return {
+        isHeader: false,
+        isProduct: true,
+        name: it.name,
+        meta: "арт. " + it.art + "  \u2022  бренд " + it.brand,
+        imgStyle: { width: imgSize, height: imgSize, flex: "none", borderRadius: "var(--radius-sm)", background: "#fff url(" + ((window.__resources && window.__resources["prod_" + it.img]) || ("assets/products/" + it.img + ".png")) + ") center/contain no-repeat" },
+        qty: n,
+        checked: !!checked[it.id],
+        cbBoxStyle: cbBox(!!checked[it.id]),
+        cbCheckStyle: cbCheck(!!checked[it.id]),
+        limited: !!it.limited,
+        lineText: fmt(lineTotal),
+        showOld: hasOld,
+        oldText: hasOld ? fmt(oldTotal) : "",
+        priceTypeText: priceLabelText.replace(" (", "\n("),
+        cardStyle: M ? {
+          position: "relative",
+          display: "flex",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+          gap: "8px 12px",
+          padding: cardPad,
+          borderTop: borderTop ? "1px solid var(--hairline-faint)" : "none",
+        } : {
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          flexWrap: "nowrap",
+          gap: "14px",
+          padding: cardPad,
+          borderTop: borderTop ? "1px solid var(--hairline-faint)" : "none",
+        },
+        checkboxWrapStyle: M ? { position: "absolute", left: "16px", top: "8px", zIndex: 3, display: "inline-flex", cursor: "pointer" } : { position: "absolute", left: cbLeft, top: cbTop, zIndex: 3, display: "inline-flex", cursor: "pointer" },
+        nameStyle: { fontFamily: "var(--font-body)", fontWeight: 500, fontSize: M ? "15px" : "18px", lineHeight: 1.35, letterSpacing: "-0.16px", color: "var(--ink)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" },
+        metaStyle: { fontSize: M ? "13px" : "14px", color: "var(--ink-soft)", letterSpacing: "-0.16px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
+        nameBlockStyle: M ? { flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column", gap: "3px", overflow: "hidden", alignSelf: "center" } : { flex: "1 1 auto", minWidth: 0, display: "flex", flexDirection: "column", gap: "4px", overflow: "hidden", alignSelf: "center" },
+        rightColStyle: M ? { flex: "1 1 100%", display: "flex", flexDirection: "row", alignItems: "center", gap: "12px", marginTop: "6px" } : { flex: "none", width: T ? "118px" : "132px", display: "flex", flexDirection: "column", gap: "0", alignItems: "stretch", alignSelf: "center" },
+        lineStyle: { fontFamily: "var(--font-heading)", fontWeight: M ? 800 : 700, fontSize: M ? "18px" : "20px", lineHeight: 1, letterSpacing: "-0.16px", color: "var(--ink)" },
+        priceBlockStyle: M ? { order: 2, display: "flex", flexDirection: "column", gap: "1px", alignItems: "flex-end", marginLeft: "auto", flex: "none" } : { order: 1, display: "flex", flexDirection: "column", gap: "2px", alignItems: "flex-start", textAlign: "left" },
+        priceTypeStyle: M ? { order: 1, flex: "1 1 auto", fontSize: "12px", color: "var(--ink-soft)", lineHeight: 1.3, letterSpacing: "-0.16px", textAlign: "left", whiteSpace: "pre-line", alignSelf: "center" } : { order: 2, fontSize: "14px", color: "var(--ink-soft)", lineHeight: 1.25, letterSpacing: "-0.16px", textAlign: "left", whiteSpace: "pre-line", marginTop: "2px" },
+        qtyBlockStyle: M ? { order: 3, display: "flex", flexDirection: "column", gap: "4px", alignItems: "center", flex: "none" } : { order: 3, display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start", marginTop: "18px", position: "relative", top: "16px" },
+        perUnitText: n > 1 ? (fmt(Math.round(unitPrice)) + "/ед") : "\u00A0",
+        perUnitSpacerTop: "\u00A0",
+        perUnitStyle: M ? { fontSize: "13px", color: "var(--ink-soft)", letterSpacing: "-0.16px", whiteSpace: "nowrap", textAlign: "center", width: "100%", lineHeight: 1.3 } : { fontSize: "14px", color: "var(--ink-soft)", letterSpacing: "-0.16px", whiteSpace: "nowrap", textAlign: "center", width: "108px", lineHeight: 1.25, marginTop: "2px" },
+        unitSpacerStyle: M ? { fontSize: "13px", letterSpacing: "-0.16px", whiteSpace: "nowrap", textAlign: "center", width: "100%", lineHeight: 1.3, visibility: "hidden" } : { display: "none" },
+        limitedStyle: { fontSize: M ? "11px" : "13px", fontWeight: 600, color: "#8a6500", whiteSpace: "nowrap", letterSpacing: "-0.16px" },
+        onQty: (v) => this.setQty(it.id, v),
+        atMin: n <= QMIN,
+        atMax: n >= QMAX,
+        onDec: () => this.setQty(it.id, clampQ(n - 1)),
+        onInc: () => this.setQty(it.id, clampQ(n + 1)),
+        onQtyInput: (e) => {
+          const raw = (e && e.target && e.target.value != null) ? String(e.target.value).replace(/[^0-9]/g, "") : "";
+          let v = parseInt(raw, 10);
+          if (isNaN(v)) v = QMIN;
+          this.setQty(it.id, clampQ(v));
+        },
+        onFocusSelect: (e) => { if (e && e.target && e.target.select) e.target.select(); },
+        stepBtnDecStyle: { ...stepBtnBase, borderRadius: "var(--radius-sm) 0 0 var(--radius-sm)", color: (n <= QMIN) ? "var(--ink-faint)" : "var(--ink)", cursor: (n <= QMIN) ? "not-allowed" : "pointer" },
+        stepBtnIncStyle: { ...stepBtnBase, borderRadius: "0 var(--radius-sm) var(--radius-sm) 0", color: (n >= QMAX) ? "var(--ink-faint)" : "var(--ink)", cursor: (n >= QMAX) ? "not-allowed" : "pointer" },
+        stepBtnHoverStyle,
+        onToggle: (e) => this.toggle(it.id, e.target.checked),
+        onRemove: () => this.remove(it.id),
+      };
+    };
+
+    let rows;
+    if (activeG.kind === "promo") {
+      // Акционные товары дополнительно группируются по названию акции,
+      // чтобы внутри вкладки появились разделители "Акция ...".
+      const groupOrder = [];
+      const groupMap = {};
+      activeG.items.forEach(it => {
+        const g = it.promoGroup || "Прочее";
+        if (!groupMap[g]) { groupOrder.push(g); groupMap[g] = []; }
+        groupMap[g].push(it);
+      });
+      rows = [];
+      let isFirst = true;
+      groupOrder.forEach(gName => {
+        rows.push({
+          isHeader: true,
+          isProduct: false,
+          title: gName,
+          headerStyle: {
+            padding: isFirst ? "20px 16px 8px" : "28px 16px 8px",
+            textAlign: "center",
+            borderTop: isFirst ? "none" : "1px solid var(--hairline-faint)",
+          },
+        });
+        isFirst = false;
+        groupMap[gName].forEach(it => { rows.push(makeRow(it, true)); });
+      });
+    } else {
+      rows = activeG.items.map((it, i) => makeRow(it, i > 0));
+    }
+
+    // --- итог заказа ---
+    // Итоги считаются только по выбранным и не удалённым товарам.
+    // Для каждой бизнес-группы отдельно копятся база и размер скидки.
+    let regBase = 0, regVolDisc = 0, regStatDisc = 0, mGoods = 0, mDisc = 0, pGoods = 0, pDisc = 0;
+    this.catalog.forEach(g => g.items.forEach(it => {
+      if (removed[it.id] || !checked[it.id]) return;
+      const n = q(it);
+      if (g.kind === "regular") {
+        const info = priceInfoOf(it);
+        regBase += info.base * n;
+        const d = info.base * (info.apPct / 100) * n;
+        if (info.useVol) regVolDisc += d; else regStatDisc += d;
+      } else if (g.kind === "markdown") {
+        mGoods += (it.old || it.unit) * n;
+        mDisc += ((it.old || it.unit) - it.unit) * n;
+      } else if (g.kind === "promo") {
+        pGoods += (it.list || it.unit) * n;
+        pDisc += Math.round(((it.list || it.unit) - it.unit) * n);
+      }
+    }));
+    // В итогах по обычным товарам показываем только те скидки,
+    // которые реально применились: статусную, объёмную или обе.
+    const regDiscLines = [];
+    if (regStatDisc > 0) regDiscLines.push({ label: "Скидка по статусу (" + cur.name + ")", amount: neg(Math.round(regStatDisc)) });
+    if (regVolDisc > 0) regDiscLines.push({ label: "Скидка за объём (" + vPct + "%)", amount: neg(Math.round(regVolDisc)) });
+    const total = (regBase - regVolDisc - regStatDisc) + (mGoods - mDisc) + (pGoods - pDisc);
+    const savings = regVolDisc + regStatDisc + mDisc + pDisc;
+
+    // --- допродажа ---
+    // Блок допродажи отслеживает комплект из четырёх товаров:
+    // уже добавленные позиции блокируют кнопку, остальные можно отметить как добавленные.
+    const upBtnBase = { minWidth: "103px", height: "33px", display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "7px 16px", borderRadius: "var(--radius-sm)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "14px", letterSpacing: "-0.14px", whiteSpace: "nowrap", flex: "none", boxSizing: "border-box", transition: "transform 0.12s ease, background 0.15s ease, opacity 0.15s ease" };
+    const upBtnAdd = { ...upBtnBase, background: "var(--green-house)", color: "#fff", border: "1px solid var(--green-house)", cursor: "pointer" };
+    const upBtnAdded = { ...upBtnBase, background: "transparent", color: "var(--green-accent)", border: "1px solid var(--green-accent)", opacity: 0.5, cursor: "default" };
+    // на мобильных используется компактная квадратная кнопка, чтобы блок не выходил за экран
+    const upBtnSquareBase = { width: "40px", height: "40px", flex: "none", display: "inline-flex", alignItems: "center", justifyContent: "center", padding: 0, borderRadius: "var(--radius-sm)", boxSizing: "border-box", transition: "transform 0.12s ease, background 0.15s ease, opacity 0.15s ease" };
+    const upBtnSquareAdd = { ...upBtnSquareBase, background: "var(--green-house)", color: "#fff", border: "1px solid var(--green-house)", cursor: "pointer" };
+    const upBtnSquareAdded = { ...upBtnSquareBase, background: "transparent", color: "var(--green-accent)", border: "1px solid var(--green-accent)", opacity: 0.5, cursor: "default" };
+    const upsell = this.upsellData.map(u => {
+      const isAdded = u.inCart || !!added[u.key];
+      const compactUp = M || T;
+      return {
+        name: u.name, price: fmt(u.price),
+        nameStyle: compactUp
+          ? { fontWeight: 500, fontSize: "14px", lineHeight: 1.3, letterSpacing: "-0.16px", color: "var(--ink)", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden", WebkitMaskImage: "linear-gradient(180deg,#000 62%,transparent)", maskImage: "linear-gradient(180deg,#000 62%,transparent)" }
+          : { fontWeight: 500, fontSize: "14px", lineHeight: 1.25, letterSpacing: "-0.16px", color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" },
+        cardStyle: { display: "flex", gap: "12px", alignItems: "center", border: "1px solid var(--hairline-faint)", borderRadius: "var(--radius-sm)", padding: "8px 10px", background: "var(--surface-card)" },
+        imgStyle: { width: 44, height: 44, flex: "none", borderRadius: "var(--radius-sm)", background: "var(--ceramic) url(" + ((window.__resources && window.__resources["prod_" + u.img]) || ("assets/products/" + u.img + ".png")) + ") center/cover no-repeat" },
+        inCart: u.inCart,
+        added: isAdded,
+        btnLabel: isAdded ? "Добавлено" : "Добавить",
+        btnStyle: compactUp ? (isAdded ? upBtnSquareAdded : upBtnSquareAdd) : (isAdded ? upBtnAdded : upBtnAdd),
+        btnIconStyle: compactUp ? { display: "block" } : { display: "none" },
+        btnLabelStyle: compactUp ? { display: "none" } : { display: "inline" },
+        btnIconPath: isAdded ? "M5 13l4 4L19 7" : "M12 5v14M5 12h14",
+        btnHover: isAdded ? {} : { background: "#142823" },
+        onAdd: () => { if (!u.inCart) this.setState(s => ({ added: { ...s.added, [u.key]: true } })); },
+      };
+    });
+    // Прогресс апселла — сколько товаров из комплекта уже есть в корзине/добавлено.
+    const upsellCount = upsell.filter(u => u.added).length;
+    const upsellComplete = upsellCount >= 4;
+    const upsellBarFillStyle = { height: "100%", width: (Math.min(1, upsellCount / 4) * 100) + "%", background: "var(--green-accent)", borderRadius: "999px", transition: "width 0.45s cubic-bezier(0.25,0.46,0.45,0.94), background 0.3s ease" };
+    const totalPositions = this.catalog.reduce((a, g) => a + g.items.filter(it => !removed[it.id]).length, 0);
+
+    // --- служебный переключатель статуса мастера ---
+    // Временный селектор статуса нужен для проверки расчётов разных уровней мастера.
+    const statusSelectStyle = { appearance: "auto", WebkitAppearance: "auto", height: "26px", padding: "2px 8px", borderRadius: "var(--radius-sm)", border: "1px solid var(--green-accent)", background: "#fff", color: "var(--green-primary)", fontFamily: "var(--font-body)", fontSize: "12px", fontWeight: 700, letterSpacing: "0.2px", cursor: "pointer", outline: "none" };
+    const statusOptions = statuses.map(s => ({ id: s.id, label: s.optLabel }));
+    const onStatusChange = (e) => this.setState({ status: e.target.value });
+
+    return {
+      bpLabel, bpBadgeStyle,
+      statusName: cur.name, statusBadges: cur.badges, statusOptions, currentStatus: curStatus, statusSelectStyle, onStatusChange, showStatusBand: !cur.noBand,
+      pageStyle, containerStyle, h1Style, statusBandStyle, statusDividerStyle, statusVipGroupStyle, statusInfoStyle, mainGridStyle, summaryColStyle,
+      volumeOuterStyle, volumeStatusCellStyle, volumeTiersWrapStyle,
+      tabsSectionStyle, tabsCardStyle, tabsRowStyle,
+      upsellCardStyle, upsellHeaderStyle, upsellH2Style, upsellDescStyle, upsellGridStyle, upsellProgressWrapStyle,
+      totalPositions,
+      tabs,
+      showVolumeBar: activeGroup === "regular",
+      showTabBody: activeGroup !== "regular",
+      volumeStatusText,
+      volumeSegments,
+      qtyInputStyle,
+      regDiscLines,
+      rows,
+      isEmpty: activeG.items.length === 0,
+      showUpsell: this.props.showUpsell ?? true,
+      upsell,
+      upsellCount,
+      upsellBarFillStyle,
+      upsellProgressText: upsellCount + " из 4 товаров",
+      sum: {
+        goods: fmt(Math.round(regBase)),
+        markdown: fmt(Math.round(mGoods)),
+        markdownDisc: neg(Math.round(mDisc)),
+        promo: fmt(Math.round(pGoods)),
+        promoDisc: neg(Math.round(pDisc)),
+        total: fmt(Math.round(total)),
+        savings: fmt(Math.round(savings)),
+      },
+    };
+  }
+}
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
