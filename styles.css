@@ -174,8 +174,8 @@ img { display: block; }
 .ds-alert-info { display:flex;align-items:flex-start;gap:12px;background:var(--canvas);border:1px solid var(--green-light);border-left:3px solid var(--green-house);border-radius:var(--radius-sm);padding:14px 16px; }
 .ds-alert-icon { flex:none;margin-top:1px;color:var(--green-house); }
 .ds-alert-body { flex:1;font-family:var(--font-ui);font-size:var(--text-body-sm);color:var(--text-muted);line-height:1.45; }
-.ds-btn-primary-lg { display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:14px 32px;font-family:var(--font-ui);font-weight:var(--weight-semibold);font-size:var(--text-body);letter-spacing:var(--tracking-normal);line-height:var(--leading-compact);background:var(--action);color:var(--on-dark);border:1px solid var(--action);border-radius:var(--radius-sm);cursor:pointer;transform:scale(1);transition:transform var(--duration-fast) ease,background var(--duration-fast) ease,border-color var(--duration-fast) ease;-webkit-tap-highlight-color:transparent; }
-.ds-btn-primary-lg:hover { background:var(--action-hover);border-color:var(--action-hover); }
+.ds-btn-primary-lg { display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:14px 32px;font-family:var(--font-ui);font-weight:var(--weight-semibold);font-size:var(--text-body);letter-spacing:var(--tracking-normal);line-height:var(--leading-compact);background:var(--green-uplift);color:var(--on-dark);border:1px solid var(--green-uplift);border-radius:var(--radius-sm);cursor:pointer;transform:scale(1);box-shadow:none;transition:transform var(--duration-fast) ease,background var(--duration-fast) ease,border-color var(--duration-fast) ease,box-shadow var(--duration-fast) ease;-webkit-tap-highlight-color:transparent; }
+.ds-btn-primary-lg:hover { background:var(--green-accent);border-color:var(--green-accent);box-shadow:0 4px 8px 0 rgba(51,161,104,0.35); }
 .ds-btn-primary-lg:active { transform:scale(var(--press-scale)); }
 
 /* --- Cart page utility classes --- */
