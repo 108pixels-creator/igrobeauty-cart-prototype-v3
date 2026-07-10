@@ -152,7 +152,7 @@
                 <label onClick="{{ tab.stop }}" data-dc-s="{{ tab.checkboxLabelStyle }}">
                   <input type="checkbox" checked="{{ tab.checked }}" onChange="{{ tab.onToggleAll }}" class="u-style-18" />
                   <span data-dc-s="{{ tab.cbBoxStyle }}">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" data-dc-s="{{ tab.cbCheckStyle }}"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" data-dc-s="{{ tab.cbCheckStyle }}"><path d="{{ tab.cbIconPath }}" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                   </span>
                 </label>
               </div>
@@ -277,6 +277,13 @@
             <div class="u-style-32">В этой группе пока нет товаров.</div>
           </sc-if>
           </div>
+
+          <sc-if value="{{ showKeepNotice }}" hint-placeholder-val="{{ false }}">
+          <div data-dc-s="{{ keepNoticeStyle }}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" data-dc-s="{{ keepNoticeIconStyle }}"><path d="M17 18C17.5304 18 18.0391 18.2107 18.4142 18.5858C18.7893 18.9609 19 19.4696 19 20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22C16.4696 22 15.9609 21.7893 15.5858 21.4142C15.2107 21.0391 15 20.5304 15 20C15 18.89 15.89 18 17 18ZM1 2H4.27L5.21 4H20C20.2652 4 20.5196 4.10536 20.7071 4.29289C20.8946 4.48043 21 4.73478 21 5C21 5.17 20.95 5.34 20.88 5.5L17.3 11.97C16.96 12.58 16.3 13 15.55 13H8.1L7.2 14.63L7.17 14.75C7.17 14.8163 7.19634 14.8799 7.24322 14.9268C7.29011 14.9737 7.3537 15 7.42 15H19V17H7C6.46957 17 5.96086 16.7893 5.58579 16.4142C5.21071 16.0391 5 15.5304 5 15C5 14.65 5.09 14.32 5.24 14.04L6.6 11.59L3 4H1V2ZM7 18C7.53043 18 8.03914 18.2107 8.41421 18.5858C8.78929 18.9609 9 19.4696 9 20C9 20.5304 8.78929 21.0391 8.41421 21.4142C8.03914 21.7893 7.53043 22 7 22C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20C5 18.89 5.89 18 7 18ZM16 11L18.78 6H6.14L8.5 11H16Z" fill="currentColor"></path></svg>
+            <span data-dc-s="{{ keepNoticeTextStyle }}">Все невыбранные товары останутся в корзине после оформления заказа</span>
+          </div>
+          </sc-if>
         </div>
 
       </div>
@@ -439,6 +446,10 @@ class Component extends DCLogic {
     const onTogglePromoTab = (e) => this.setState({ showPromoTab: e.target.checked });
     const cbBox = (on, size) => ({ display: "inline-flex", alignItems: "center", justifyContent: "center", width: size || 20, height: size || 20, flex: "none", borderRadius: "var(--radius-xs)", border: "1px solid " + (on ? "var(--green-accent)" : "var(--hairline)"), backgroundColor: on ? "var(--green-accent)" : "var(--canvas)", transition: "border-color 0.2s, background-color 0.2s" });
     const cbCheck = (on) => ({ opacity: on ? 1 : 0, transition: "opacity var(--duration-fast) ease" });
+    // Трёхсостояночный чекбокс вкладки: полностью выбрано / частично выбрано / не выбрано.
+    const cbBoxTri = (state, size) => ({ display: "inline-flex", alignItems: "center", justifyContent: "center", width: size || 20, height: size || 20, flex: "none", borderRadius: "var(--radius-xs)", border: "1px solid " + (state !== "off" ? "var(--green-accent)" : "var(--hairline)"), backgroundColor: state !== "off" ? "var(--green-accent)" : "var(--canvas)", transition: "border-color 0.2s, background-color 0.2s" });
+    const cbCheckTri = (state) => ({ opacity: state !== "off" ? 1 : 0, transition: "opacity var(--duration-fast) ease" });
+    const cbIconPath = (state) => state === "partial" ? "M5 12h14" : "M5 13l4 4L19 7";
 
     // --- брейкпоинт ---
     const bp = this.state.bp || "desktop";
@@ -516,8 +527,9 @@ class Component extends DCLogic {
     // сумма вкладки считается по базовой цене товара в текущей группе.
     const groups = enabledCatalog.map(g => {
       const items = g.items.filter(it => !removed[it.id]);
-      const sum = items.reduce((a, it) => a + Math.round(it.unit * q(it)), 0);
-      return { ...g, items, sum };
+      const checkedItems = items.filter(it => checked[it.id]);
+      const sum = checkedItems.reduce((a, it) => a + Math.round(it.unit * q(it)), 0);
+      return { ...g, items, checkedItems, sum };
     });
 
     const activeG = groups.find(g => g.id === activeGroup) || groups[0];
@@ -547,14 +559,17 @@ class Component extends DCLogic {
       const isFirst = gi === 0;
       const isLast = gi === groups.length - 1;
       const allChecked = g.items.length > 0 && g.items.every(it => checked[it.id]);
+      const noneChecked = g.checkedItems.length === 0;
+      const triState = allChecked ? "on" : (noneChecked ? "off" : "partial");
       return {
         id: g.id,
         name: M ? (tabShortNames[g.id] || g.name) : g.name,
-        countText: M ? String(g.items.length) : (g.items.length + " шт."),
+        countText: M ? String(g.checkedItems.length) : (g.checkedItems.length + " шт."),
         sumText: fmt(g.sum),
         checked: allChecked,
-        cbBoxStyle: M ? cbBox(allChecked, 20) : cbBox(allChecked),
-        cbCheckStyle: cbCheck(allChecked),
+        cbBoxStyle: M ? cbBoxTri(triState, 20) : cbBoxTri(triState),
+        cbCheckStyle: cbCheckTri(triState),
+        cbIconPath: cbIconPath(triState),
         checkboxLabelStyle: M
           ? { display: "inline-flex", cursor: "pointer", position: "relative", gridArea: "check", alignSelf: "end", justifySelf: "end" }
           : { display: "inline-flex", flex: "none", cursor: "pointer", position: "relative", gridArea: "check", alignSelf: "center" },
@@ -894,10 +909,11 @@ class Component extends DCLogic {
     if (regPromoDisc > 0) regDiscLines.push({ label: "Скидка по акции (от 25 шт.)", amount: neg(Math.round(regPromoDisc)) });
     const total = (regBase - regVolDisc - regStatDisc - regPromoDisc) + (mGoods - mDisc) + (pGoods - pDisc);
     const savings = regVolDisc + regStatDisc + regPromoDisc + mDisc + pDisc;
-    // Строки «Уценённые товары»/«Товары по акции» показываем в итоге только когда
-    // соответствующая вкладка целиком отмечена галочкой и в ней есть товары.
-    const showMarkdownSummary = !!markdownG && markdownG.items.length > 0 && markdownG.items.every(it => checked[it.id]);
-    const showPromoSummary = !!promoG && promoG.items.length > 0 && promoG.items.every(it => checked[it.id]);
+    // Строки «Уценённые товары»/«Товары по акции» показываем в итоге, если в
+    // соответствующей вкладке отмечен хотя бы один товар — сумма при этом
+    // учитывает только отмеченные позиции.
+    const showMarkdownSummary = !!markdownG && markdownG.items.some(it => checked[it.id]);
+    const showPromoSummary = !!promoG && promoG.items.some(it => checked[it.id]);
     // Кнопка оформления заказа неактивна, если ни один товар нигде не выбран.
     const anyItemChecked = enabledCatalog.some(g => g.items.some(it => !removed[it.id] && checked[it.id]));
     const checkoutBtnStyle = { opacity: anyItemChecked ? 1 : 0.3, pointerEvents: anyItemChecked ? "auto" : "none", cursor: anyItemChecked ? "pointer" : "not-allowed", transition: "opacity 0.15s ease" };
@@ -1004,6 +1020,10 @@ class Component extends DCLogic {
       regDiscLines,
       rows,
       isEmpty: activeG.items.length === 0,
+      showKeepNotice: totalPositions > 0,
+      keepNoticeStyle: { display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", marginTop: M ? "16px" : "20px", color: "var(--ink-soft)" },
+      keepNoticeIconStyle: { flex: "none", width: "20px", height: "20px", display: "block" },
+      keepNoticeTextStyle: { fontFamily: "var(--font-body)", fontWeight: 400, fontSize: M ? "13px" : "14px", lineHeight: 1.4, letterSpacing: "-0.16px" },
       showMarkdownSummary,
       showPromoSummary,
       checkoutBtnStyle,
