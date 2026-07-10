@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
@@ -10,6 +10,8 @@
 <meta name="ext-resource-dependency" content="assets/products/levissime.png" data-resource-id="prod_levissime">
 <meta name="ext-resource-dependency" content="assets/products/soleo.jpg" data-resource-id="prod_soleo">
 <meta name="ext-resource-dependency" content="assets/promo-badge-icon.svg" data-resource-id="promo_badge_icon">
+<meta name="ext-resource-dependency" content="assets/products/levis-younglife.png" data-resource-id="prod_levis-younglife">
+<meta name="ext-resource-dependency" content="assets/products/levis-hydrage.png" data-resource-id="prod_levis-hydrage">
 <template id="__bundler_thumbnail" data-bg-color="#f2f0eb">
   <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
     <rect width="1200" height="800" fill="#f2f0eb"/>
@@ -47,6 +49,14 @@
           </sc-for>
         </select>
       </div>
+      <label data-dc-s="{{ devToggleLabelStyle }}">
+        <input type="checkbox" checked="{{ showMarkdownTab }}" onChange="{{ onToggleMarkdownTab }}" data-dc-s="{{ devToggleInputStyle }}" />
+        <span class="u-style-3">Уценённые товары</span>
+      </label>
+      <label data-dc-s="{{ devToggleLabelStyle }}">
+        <input type="checkbox" checked="{{ showPromoTab }}" onChange="{{ onTogglePromoTab }}" data-dc-s="{{ devToggleInputStyle }}" />
+        <span class="u-style-3">Спец. акции</span>
+      </label>
     </div>
 
     <!-- Хлебные крошки -->
@@ -91,11 +101,13 @@
         </sc-if>
         <sc-for list="{{ statusBadges }}" as="b" hint-placeholder-count="2">
           <span data-dc-s="{{ b.wrapStyle }}" onMouseEnter="{{ b.onEnter }}" onMouseLeave="{{ b.onLeave }}" onClick="{{ b.onToggle }}">
+            <sc-if value="{{ b.hasTip }}" hint-placeholder-val="{{ false }}">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor" data-dc-s="{{ b.iconStyle }}"><path d="M9.18751 8.24996C9.60172 8.24996 9.9375 8.58575 9.93751 8.99996V12H10.5C10.9142 12 11.25 12.3357 11.25 12.75C11.25 13.1642 10.9142 13.5 10.5 13.5H7.87501C7.46079 13.5 7.12501 13.1642 7.12501 12.75C7.12501 12.3358 7.4608 12 7.87501 12H8.43751V9.74996C8.02329 9.74996 7.68751 9.41417 7.68751 8.99996C7.68751 8.58575 8.0233 8.24996 8.43751 8.24996H9.18751Z"></path><path d="M9.00001 4.49996C9.39783 4.49996 9.77925 4.65811 10.0606 4.93941C10.3419 5.22072 10.5 5.60214 10.5 5.99996C10.5 6.39778 10.3419 6.7792 10.0606 7.06051C9.77925 7.34181 9.39783 7.49996 9.00001 7.49996C8.60218 7.49996 8.22076 7.34181 7.93946 7.06051C7.65816 6.7792 7.50001 6.39778 7.50001 5.99996C7.50001 5.60214 7.65816 5.22072 7.93946 4.93941C8.22076 4.65811 8.60218 4.49996 9.00001 4.49996Z"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M8.99927 0.74996C10.0831 0.748648 11.1569 0.961406 12.1582 1.37618C13.1589 1.79073 14.0679 2.39883 14.833 3.16549L15.1135 3.45919C15.7498 4.15977 16.2608 4.9663 16.6238 5.84249C17.0383 6.84327 17.2511 7.91602 17.25 8.99923L17.2405 9.40499C17.195 10.3502 16.9867 11.282 16.6238 12.1582C16.2092 13.1588 15.6004 14.0671 14.8337 14.8322C14.0684 15.5996 13.1595 16.2089 12.1582 16.6237C11.1569 17.0385 10.0831 17.2513 8.99927 17.25C7.91607 17.2511 6.84331 17.0382 5.84254 16.6237C4.84115 16.2089 3.931 15.6004 3.16553 14.833C2.39905 14.0679 1.79071 13.1587 1.37623 12.1582C0.961451 11.1568 0.748694 10.0831 0.750006 8.99923C0.74889 7.91602 0.961732 6.84326 1.37623 5.84249C1.79103 4.8411 2.39961 3.93095 3.167 3.16549C3.93217 2.39875 4.84176 1.79073 5.84254 1.37618C6.84331 0.961686 7.91607 0.748844 8.99927 0.74996ZM8.99927 2.24996C8.11299 2.24887 7.23484 2.42275 6.41602 2.76192C5.59728 3.10109 4.85341 3.59861 4.22755 4.22603L4.22608 4.2275C3.59865 4.85337 3.10113 5.59723 2.76197 6.41598C2.42279 7.23479 2.24891 8.11294 2.25001 8.99923V9.00069C2.24891 9.88698 2.42279 10.7651 2.76197 11.5839C3.05878 12.3005 3.47725 12.9593 3.99756 13.5322L4.22608 13.7724L4.22755 13.7739C4.85341 14.4013 5.59728 14.8988 6.41602 15.238C7.23484 15.5772 8.11299 15.7511 8.99927 15.75H9.00074C9.88702 15.7511 10.7652 15.5772 11.584 15.238C12.4027 14.8988 13.1466 14.4013 13.7725 13.7739L13.7739 13.7724C14.4014 13.1465 14.8989 12.4027 15.238 11.5839C15.5772 10.7651 15.7511 9.88698 15.75 9.00069V8.99923C15.7511 8.11294 15.5772 7.23479 15.238 6.41598C14.8989 5.59723 14.4014 4.85337 13.7739 4.2275L13.7725 4.22603C13.1466 3.59861 12.4027 3.10108 11.584 2.76192C10.7652 2.42275 9.88702 2.24887 9.00074 2.24996H8.99927Z"></path></svg>
+            </sc-if>
             <span>{{ b.t }}</span>
             <sc-if value="{{ b.open }}" hint-placeholder-val="{{ false }}">
-              <div role="tooltip" data-dc-s="{{ badgeTipStyle }}" onClick="{{ stopProp }}">
-                <span data-dc-s="{{ badgeTipTextStyle }}">{{ b.tip }}</span>
+              <div role="tooltip" data-dc-s="{{ b.tipStyle }}" onClick="{{ stopProp }}">
+                <span data-dc-s="{{ b.tipTextStyle }}">{{ b.tip }}</span>
                 <span data-dc-s="{{ badgeArrowStyle }}"></span>
               </div>
             </sc-if>
@@ -111,12 +123,14 @@
     </sc-if>
 
     <!-- Информационное сообщение -->
+    <sc-if value="{{ showTabsRow }}" hint-placeholder-val="{{ true }}">
     <div class="u-style-14">
       <div role="alert" class="ds-alert-info">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="ds-alert-icon"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"></circle><path d="M12 11v5M12 8h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
         <div class="ds-alert-body">В вашей корзине есть товары из разных категорий — они рассчитываются отдельно по своим правилам цены.</div>
       </div>
     </div>
+    </sc-if>
 
     <!-- Двухколоночная сетка -->
     <div data-dc-s="{{ mainGridStyle }}">
@@ -128,6 +142,7 @@
         <div data-dc-s="{{ tabsSectionStyle }}">
 
           <!-- Строка вкладок, отдельно от подложки карточки -->
+          <sc-if value="{{ showTabsRow }}" hint-placeholder-val="{{ true }}">
           <div data-dc-s="{{ tabsRowStyle }}">
             <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="3">
               <div onClick="{{ tab.onSelect }}" data-dc-s="{{ tab.tabStyle }}">
@@ -143,6 +158,7 @@
               </div>
             </sc-for>
           </div>
+          </sc-if>
 
           <!-- Подложка карточки товаров: шкала скидки + строки товаров -->
           <div data-dc-s="{{ tabsCardStyle }}">
@@ -227,14 +243,24 @@
                       <span class="u-style-27">{{ row.oldText }}</span>
                     </sc-if>
                   </div>
-                  <span data-dc-s="{{ row.priceTypeStyle }}">{{ row.priceTypeText }}</span>
+                  <sc-if value="{{ row.isPromoLabel }}" hint-placeholder-val="{{ false }}">
+                    <span data-dc-s="{{ row.priceTypeBadgeStyle }}">{{ row.priceTypeText }}</span>
+                  </sc-if>
+                  <sc-if value="{{ !row.isPromoLabel }}" hint-placeholder-val="{{ true }}">
+                    <span data-dc-s="{{ row.priceTypeStyle }}">{{ row.priceTypeText }}</span>
+                  </sc-if>
                   <div data-dc-s="{{ row.qtyBlockStyle }}">
                     <span data-dc-s="{{ row.unitSpacerStyle }}">{{ row.perUnitSpacerTop }}</span>
+                    <sc-if value="{{ row.qtyLocked }}" hint-placeholder-val="{{ false }}">
+                      <div data-dc-s="{{ row.lockedPlateStyle }}">1 максимум</div>
+                    </sc-if>
+                    <sc-if value="{{ !row.qtyLocked }}" hint-placeholder-val="{{ true }}">
                     <div class="u-style-28">
                       <button type="button" aria-label="Уменьшить" onClick="{{ row.onDec }}" disabled="{{ row.atMin }}" data-dc-s="{{ row.stepBtnDecStyle }}" data-dc-hover="background:#EDEBE9 !important;z-index:2;" data-dc-active="transform:scale(0.94);">−</button>
                       <input type="text" inputmode="numeric" value="{{ row.qty }}" onChange="{{ row.onQtyInput }}" onFocus="{{ row.onFocusSelect }}" data-dc-s="{{ qtyInputStyle }}" data-dc-focus="border-color:var(--green-accent);z-index:2;" />
                       <button type="button" aria-label="Увеличить" onClick="{{ row.onInc }}" disabled="{{ row.atMax }}" data-dc-s="{{ row.stepBtnIncStyle }}" data-dc-hover="background:#EDEBE9 !important;z-index:2;" data-dc-active="transform:scale(0.94);">+</button>
                     </div>
+                    </sc-if>
                     <span data-dc-s="{{ row.perUnitStyle }}">{{ row.perUnitText }}</span>
                   </div>
                 </div>
@@ -266,16 +292,20 @@
                 <div class="u-style-47"><span class="u-style-48">{{ d.label }}</span><span class="u-style-50">{{ d.amount }}</span></div>
               </sc-for>
             </div>
+            <sc-if value="{{ showMarkdownSummary }}" hint-placeholder-val="{{ false }}">
             <div class="u-style-51"></div>
             <div class="u-style-46">
               <div class="u-style-47"><span class="u-style-48">Уценённые товары</span><span class="u-style-49">{{ sum.markdown }}</span></div>
               <div class="u-style-47"><span class="u-style-48">Уценка</span><span class="u-style-50">{{ sum.markdownDisc }}</span></div>
             </div>
+            </sc-if>
+            <sc-if value="{{ showPromoSummary }}" hint-placeholder-val="{{ false }}">
             <div class="u-style-51"></div>
             <div class="u-style-46">
               <div class="u-style-47"><span class="u-style-48">Товары по акции</span><span class="u-style-49">{{ sum.promo }}</span></div>
               <div class="u-style-47"><span class="u-style-48">Выгода</span><span class="u-style-50">{{ sum.promoDisc }}</span></div>
             </div>
+            </sc-if>
           </div>
           <div class="u-style-52"></div>
           <div class="u-style-53">
@@ -286,8 +316,17 @@
             <span class="u-style-57">Общая экономия</span>
             <span class="u-style-58">{{ sum.savings }}</span>
           </div>
-          <button type="button" class="ds-btn-primary-lg"><span class="u-style-59"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="u-style-60"><path d="M17 18C17.5304 18 18.0391 18.2107 18.4142 18.5858C18.7893 18.9609 19 19.4696 19 20C19 20.5304 18.7893 21.0391 18.4142 21.4142C18.0391 21.7893 17.5304 22 17 22C16.4696 22 15.9609 21.7893 15.5858 21.4142C15.2107 21.0391 15 20.5304 15 20C15 18.89 15.89 18 17 18ZM1 2H4.27L5.21 4H20C20.2652 4 20.5196 4.10536 20.7071 4.29289C20.8946 4.48043 21 4.73478 21 5C21 5.17 20.95 5.34 20.88 5.5L17.3 11.97C16.96 12.58 16.3 13 15.55 13H8.1L7.2 14.63L7.17 14.75C7.17 14.8163 7.19634 14.8799 7.24322 14.9268C7.29011 14.9737 7.3537 15 7.42 15H19V17H7C6.46957 17 5.96086 16.7893 5.58579 16.4142C5.21071 16.0391 5 15.5304 5 15C5 14.65 5.09 14.32 5.24 14.04L6.6 11.59L3 4H1V2ZM7 18C7.53043 18 8.03914 18.2107 8.41421 18.5858C8.78929 18.9609 9 19.4696 9 20C9 20.5304 8.78929 21.0391 8.41421 21.4142C8.03914 21.7893 7.53043 22 7 22C6.46957 22 5.96086 21.7893 5.58579 21.4142C5.21071 21.0391 5 20.5304 5 20C5 18.89 5.89 18 7 18ZM16 11L18.78 6H6.14L8.5 11H16Z" fill="currentColor"></path></svg>Оформить заказ</span></button>
+          <button type="button" class="ds-btn-primary-lg" data-dc-s="{{ checkoutBtnStyle }}" disabled="{{ !anyItemChecked }}"><span class="u-style-59">Перейти к оформлению</span></button>
+          <span data-dc-s="{{ checkoutHintStyle }}">Доступные способы и время доставки можно выбрать при оформлении заказа</span>
         </div>
+        <sc-if value="{{ showPromoNotice }}" hint-placeholder-val="{{ false }}">
+        <div data-dc-s="{{ promoNoticeStyle }}">
+          <img src="assets/promo-badge-icon.svg" alt="Акция" data-dc-s="{{ promoNoticeIconStyle }}" />
+          <span data-dc-s="{{ promoNoticeTextStyle }}">В корзине есть товары, входящие в состав акций. Узнайте <a href="https://www.igrobeauty.ru/personal/promo/" target="_blank" rel="noopener" data-dc-s="{{ promoNoticeLinkStyle }}">подробнее об условиях</a></span>
+        </div>
+        </sc-if>
+
+      </div>
       </div>
 
     </div>
@@ -304,7 +343,7 @@ class Component extends DCLogic {
       { id: "r1", name: "P-06 Nirvel Pastel ArtX 100 мл Краситель для волос, оттенок - Серебристый", art: "IGRO-5750", brand: "Nirvel", retail: 1500, unit: 1350, qty: 4, img: "nirvel", limited: true, priceLabel: "Цена мастера (Лига II)" },
       { id: "r2", name: "Color Краска для бровей и ресниц 15 мл, оттенок натуральный КОРИЧНЕВЫЙ", art: "IGRO-9145", brand: "Lash Color", retail: 800, unit: 720, qty: 1, img: "lashcolor", priceLabel: "Цена мастера (Лига II)" },
       { id: "r3", name: "9.75 Крем-краска Светлый карамельн. блонд 100 мл, PROFY Touch Concept", art: "МТ56825", brand: "Concept", retail: 500, unit: 450, qty: 2, img: "concept", priceLabel: "Цена мастера (Лига II)" },
-      { id: "r4", name: "Ускоритель загара Soleo Lolli Pop, 150 мл", art: "WBAST0005", brand: "Soleo", retail: 900, unit: 810, qty: 1, img: "soleo", priceLabel: "Цена мастера (Лига II)", hasPromoBadge: true },
+      { id: "r4", name: "Ускоритель загара Soleo Lolli Pop, 150 мл", art: "WBAST0005", brand: "Soleo", retail: 345, unit: 310, qty: 1, img: "soleo", priceLabel: "Цена мастера (Лига II)", hasPromoBadge: true, qtyPromoThreshold: 25, qtyPromoPct: 25 },
     ] },
     { id: "markdown", name: "Уценённые товары", kind: "markdown", items: [
       { id: "m1", name: "Маска для волос восстанавливающая, 500 мл", art: "IGRO-2201", brand: "Kapous", old: 1400, unit: 980, qty: 1, img: "levissime" },
@@ -313,9 +352,9 @@ class Component extends DCLogic {
       { id: "m4", name: "Бальзам-уход после окрашивания, 200 мл", art: "IGRO-2310", brand: "Kapous", old: 710, unit: 497, qty: 1, img: "iuver" },
     ] },
     { id: "promo", name: "Специальные акции", kind: "promo", items: [
-      { id: "p1", name: "Шампунь восстанавливающий 1000 мл", art: "IGRO-5750", brand: "Nirvel", promoGroup: "Акция 10+2 Nirvel", unit: 416.67, list: 500, qty: 12, img: "nirvel" },
-      { id: "p2", name: "Шампунь восстанавливающий 1000 мл", art: "IGRO-5750", brand: "Levissime", promoGroup: "Акция 20% LevisSime", unit: 2400, list: 3000, qty: 2, img: "levissime" },
-      { id: "p3", name: "Шампунь восстанавливающий 500 мл", art: "IGRO-5750", brand: "Levissime", promoGroup: "Акция 20% LevisSime", unit: 1200, list: 1500, qty: 2, img: "levissime" },
+      { id: "p1", name: "Шампунь восстанавливающий 1000 мл", art: "IGRO-5750", brand: "Nirvel", promoGroup: "АКЦИЯ \"СЕБЕ ЛЮБИМОЙ\"", unit: 416.67, list: 500, qty: 1, qtyLocked: true, img: "nirvel" },
+      { id: "p2", name: "LeviSsime Крем антиоксидантный д/молодой кожи Young Life Glass Skin 50 мл", art: "4758", brand: "Levissime", promoGroup: "АКЦИЯ \"СЕБЕ ЛЮБИМОЙ\"", unit: 1320, list: 1650, qty: 1, qtyLocked: true, img: "levis-younglife" },
+      { id: "p3", name: "LeviSsime Крем увлажняющий ночной для лица / Hydrage be.Essential Night Cream 50 мл", art: "МТ4737145", brand: "Levissime", promoGroup: "АКЦИЯ \"СЕБЕ ЛЮБИМОЙ\"", unit: 1360, list: 1700, qty: 1, qtyLocked: true, img: "levis-hydrage" },
     ] },
   ];
 
@@ -335,10 +374,10 @@ class Component extends DCLogic {
   statuses = [
     { id: "rrc", name: "РРЦ", base: 0, brand: 0, mult: 2, noBand: true, priceRoot: "РРЦ", shortRoot: "РРЦ", noDiscLabel: "Рекомендованная\nРозничная Цена", optLabel: "Не авторизованный (РРЦ)", badges: [] },
     { id: "master", name: "Мастер", base: 0, brand: 0, mult: 1, priceRoot: "Цена Мастера", shortRoot: "ЦМ", noDiscLabel: "Цена Мастера", optLabel: "нет статуса(цена мастера)", badges: [{ t: "Цена Мастера", tip: "Цена Мастера (ЦМ) — означает, что цены на все товары в корзине, показаны специально для мастеров" }] },
-    { id: "liga2", name: "Лига II", base: 10, brand: 10, optLabel: "Лига II (скидка 10%)", badges: [{ t: "Скидка 10%", tip: "Ваша скидка по статусу Лига II. Применяется ко всем товарам, если для них не действуют более выгодные условия." }] },
-    { id: "liga1", name: "Лига I", base: 15, brand: 15, optLabel: "Лига I (скидка 15%)", badges: [{ t: "Скидка 15%", tip: "Ваша скидка по статусу Лига I. Применяется ко всем товарам, если для них не действуют более выгодные условия." }] },
-    { id: "vip", name: "VIP", base: 15, brand: 20, optLabel: "VIP (скидка 15% бренды 20%)", badges: [{ t: "Скидка 15%", tip: "Ваша VIP-скидка на товары, которые не входят в список брендов с повышенной скидкой. Применяется к остальному ассортименту" }, { t: "Бренды 20%", tip: "Повышенная VIP-скидка на товары брендов Nirvel, Levissime, Iuver, Depilflax 100, Starpil, Lash Color, RefectoCil, Soleo, Comair и ИГРObeauty." }] },
-    { id: "supervip", name: "Супер VIP", base: 15, brand: 25, optLabel: "Супер VIP (скидка 15% бренды 25%)", badges: [{ t: "Скидка 15%", tip: "Ваша VIP-скидка на товары, которые не входят в список брендов с повышенной скидкой. Применяется к остальному ассортименту" }, { t: "Бренды 25%", tip: "Повышенная Супер VIP-скидка на товары брендов Nirvel, Levissime, Iuver, Depilflax 100, Starpil, Lash Color, RefectoCil, Soleo, Comair и ИГРObeauty." }] },
+    { id: "liga2", name: "Лига II", base: 10, brand: 10, optLabel: "Лига II (скидка 10%)", badges: [{ t: "Скидка 10%" }] },
+    { id: "liga1", name: "Лига I", base: 15, brand: 15, optLabel: "Лига I (скидка 15%)", badges: [{ t: "Скидка 15%" }] },
+    { id: "vip", name: "VIP", base: 15, brand: 20, optLabel: "VIP (скидка 15% бренды 20%)", badges: [{ t: "Бренды 20%", tip: "Скидка на бренды Nirvel, Levissime, Iuver, Depilflax 100, Starpil, Lash Color, RefectoCil, Soleo, Comair и ИГРObeauty." }, { t: "Скидка 15%", tip: "Скидка на остальные бренды", short: true }] },
+    { id: "supervip", name: "Супер VIP", base: 15, brand: 25, optLabel: "Супер VIP (скидка 15% бренды 25%)", badges: [{ t: "Бренды 25%", tip: "Скидка на бренды Nirvel, Levissime, Iuver, Depilflax 100, Starpil, Lash Color, RefectoCil, Soleo, Comair и ИГРObeauty." }, { t: "Скидка 15%", tip: "Скидка на остальные бренды", short: true }] },
   ];
 
   // Рекомендованные товары для допродажи.
@@ -358,7 +397,7 @@ class Component extends DCLogic {
     this.catalog.forEach(g => g.items.forEach(it => { qty[it.id] = it.qty; checked[it.id] = true; }));
     const w = (typeof window !== "undefined") ? window.innerWidth : 1340;
     const bp = w >= 1280 ? "desktop" : w >= 768 ? "tablet" : "mobile";
-    return { qty, checked, removed: {}, activeGroup: "regular", added: {}, bp, narrow: w < 540, status: "vip" };
+    return { qty, checked, removed: {}, activeGroup: "regular", added: {}, bp, narrow: w < 540, status: "vip", showMarkdownTab: true, showPromoTab: true };
   })();
 
   componentDidMount() {
@@ -390,9 +429,14 @@ class Component extends DCLogic {
   remove = (id) => this.setState(s => ({ removed: { ...s.removed, [id]: true } }));
 
   renderVals() {
-    const { qty, checked, removed, activeGroup, added } = this.state;
+    const { qty, checked, removed, activeGroup, added, showMarkdownTab, showPromoTab } = this.state;
     const fmt = this.fmt, neg = this.neg;
     const q = (it) => qty[it.id] ?? it.qty;
+    // Служебные тумблеры для разработчика: включают/выключают вкладки
+    // «Уценённые товары» и «Спец. акции» в этом прототипе.
+    const enabledCatalog = this.catalog.filter(g => g.id === "regular" || (g.id === "markdown" && showMarkdownTab) || (g.id === "promo" && showPromoTab));
+    const onToggleMarkdownTab = (e) => this.setState({ showMarkdownTab: e.target.checked });
+    const onTogglePromoTab = (e) => this.setState({ showPromoTab: e.target.checked });
     const cbBox = (on, size) => ({ display: "inline-flex", alignItems: "center", justifyContent: "center", width: size || 20, height: size || 20, flex: "none", borderRadius: "var(--radius-xs)", border: "1px solid " + (on ? "var(--green-accent)" : "var(--hairline)"), backgroundColor: on ? "var(--green-accent)" : "var(--canvas)", transition: "border-color 0.2s, background-color 0.2s" });
     const cbCheck = (on) => ({ opacity: on ? 1 : 0, transition: "opacity var(--duration-fast) ease" });
 
@@ -458,7 +502,7 @@ class Component extends DCLogic {
     const tabsSectionStyle = { display: "flex", flexDirection: "column", gap: M ? "10px" : "0" };
     // подложка списка товаров — полный блид на мобильном, без вкладок внутри
     // радиус только снизу на десктопе/планшете — верх не скруглён, чтобы не было визуального разрыва со вкладками
-    const tabsCardStyle = { background: "var(--surface-card)", borderRadius: M ? "0" : "0 0 var(--radius-md) var(--radius-md)", boxShadow: "var(--shadow-card)", overflow: "visible", marginLeft: M ? "-16px" : "0", marginRight: M ? "-16px" : "0" };
+    let tabsCardStyle = { background: "var(--surface-card)", borderRadius: M ? "0" : "0 0 var(--radius-md) var(--radius-md)", boxShadow: "var(--shadow-card)", overflow: "visible", marginLeft: M ? "-16px" : "0", marginRight: M ? "-16px" : "0" };
     // строка вкладок сама по себе, с обычным отступом контейнера на мобильном
     const tabsRowStyle = M ? { display: "flex", gap: "0" } : { display: "flex", gap: "0", background: "#F9F9F9", borderBottom: "1px solid var(--hairline-faint)", position: "relative" };
     const upsellHeaderStyle = { display: "flex", flexDirection: M ? "column" : "row", alignItems: "flex-start", justifyContent: "space-between", gap: M ? "12px" : "24px", marginBottom: M ? "16px" : "18px" };
@@ -470,14 +514,20 @@ class Component extends DCLogic {
     // --- группы товаров ---
     // Готовим группы для вкладок: удалённые товары исключаются,
     // сумма вкладки считается по базовой цене товара в текущей группе.
-    const groups = this.catalog.map(g => {
+    const groups = enabledCatalog.map(g => {
       const items = g.items.filter(it => !removed[it.id]);
       const sum = items.reduce((a, it) => a + Math.round(it.unit * q(it)), 0);
       return { ...g, items, sum };
     });
 
     const activeG = groups.find(g => g.id === activeGroup) || groups[0];
+    // Когда доступны только обычные товары, вкладки целиком скрываются —
+    // подложка карточки получает полное скругление со всех сторон.
+    const showTabsRow = groups.length > 1;
+    if (!showTabsRow) tabsCardStyle = { ...tabsCardStyle, borderRadius: M ? "0" : "var(--radius-md)" };
     const regularG = groups.find(g => g.id === "regular") || groups[0];
+    const markdownG = groups.find(g => g.id === "markdown");
+    const promoG = groups.find(g => g.id === "promo");
 
     // --- статус мастера и модель скидки для позиции, только обычные товары ---
     // Выбранный статус мастера влияет только на обычные товары.
@@ -498,6 +548,7 @@ class Component extends DCLogic {
       const isLast = gi === groups.length - 1;
       const allChecked = g.items.length > 0 && g.items.every(it => checked[it.id]);
       return {
+        id: g.id,
         name: M ? (tabShortNames[g.id] || g.name) : g.name,
         countText: M ? String(g.items.length) : (g.items.length + " шт."),
         sumText: fmt(g.sum),
@@ -618,17 +669,22 @@ class Component extends DCLogic {
     const statusMult = cur.mult || 1;
     const priceRoot = cur.priceRoot || "Цена Мастера";
     const shortRoot = cur.shortRoot || "ЦМ";
-    const priceInfoOf = (it) => {
+    const priceInfoOf = (it, nOverride) => {
+      const n = nOverride != null ? nOverride : q(it);
       const base = (it.retail != null ? it.retail : it.unit) * statusMult;
       const sPct = statusPctOf(it);
       const useVol = sourceIsVolume(it);
-      const apPct = useVol ? vPct : sPct;
+      // Акция по количеству: при достижении порога штук цена по акции
+      // заменяет собой и статусную, и объёмную скидку.
+      const qtyPromo = !!(it.qtyPromoThreshold && n >= it.qtyPromoThreshold);
+      const apPct = qtyPromo ? it.qtyPromoPct : (useVol ? vPct : sPct);
       const unitPrice = base * (1 - apPct / 100);
       let label;
-      if (useVol) label = shortRoot + " со скидкой\n" + vPct + "% за объём";
+      if (qtyPromo) label = "Цена по Акции";
+      else if (useVol) label = shortRoot + " со скидкой\n" + vPct + "% за объём";
       else if (sPct > 0) label = shortRoot + " со скидкой\n" + cur.name + " " + sPct + "%";
       else label = cur.noDiscLabel || priceRoot;
-      return { base, sPct, useVol, apPct, unitPrice, label };
+      return { base, sPct, useVol, apPct, unitPrice, label, qtyPromo };
     };
 
     const volumeSegments = tiers.map((t, i) => {
@@ -675,18 +731,20 @@ class Component extends DCLogic {
     const qtyInputStyle = { position: "relative", width: "46px", height: "32px", textAlign: "center", border: "1px solid var(--border-default)", borderRadius: "0", margin: "0 -1px", fontFamily: "var(--font-body)", fontSize: "15px", fontWeight: "var(--weight-bold)", color: "var(--ink)", background: "var(--canvas)", outline: "none", padding: "0 4px", boxSizing: "border-box", MozAppearance: "textfield" };
 
     const makeRow = (it, borderTop) => {
-      const n = q(it);
+      const n = it.qtyLocked ? 1 : q(it);
       const clampQ = (v) => Math.min(QMAX, Math.max(QMIN, v));
       let unitPrice = it.unit;
       let priceLabelText = it.priceLabel || "";
+      let qtyPromoActive = false, qtyPromoBase = null;
       if (activeG.kind === "regular") {
-        const info = priceInfoOf(it);
+        const info = priceInfoOf(it, n);
         unitPrice = info.unitPrice;
         priceLabelText = info.label;
+        if (info.qtyPromo) { qtyPromoActive = true; qtyPromoBase = info.base; }
       }
       const lineTotal = Math.round(unitPrice * n);
-      const hasOld = it.old != null || it.list != null;
-      const oldPrice = it.old != null ? it.old : it.list;
+      const hasOld = it.old != null || it.list != null || qtyPromoActive;
+      const oldPrice = it.old != null ? it.old : (it.list != null ? it.list : qtyPromoBase);
       const oldTotal = hasOld ? Math.round(oldPrice * n) : 0;
       return {
         isHeader: false,
@@ -742,12 +800,18 @@ class Component extends DCLogic {
         lineStyle: { fontFamily: "var(--font-heading)", fontWeight: M ? 800 : 700, fontSize: M ? "18px" : "20px", lineHeight: 1, letterSpacing: "-0.16px", color: "var(--ink)" },
         priceBlockStyle: M ? { order: 2, display: "flex", flexDirection: "column", gap: "1px", alignItems: "flex-end", marginLeft: "auto", flex: "none" } : { order: 1, display: "flex", flexDirection: "column", gap: "2px", alignItems: "flex-start", textAlign: "left" },
         priceTypeStyle: M ? { order: 1, flex: "1 1 auto", fontSize: "12px", color: "var(--ink-soft)", lineHeight: 1.3, letterSpacing: "-0.16px", textAlign: "left", whiteSpace: "pre-line", alignSelf: "center" } : { order: 2, fontSize: "14px", color: "var(--ink-soft)", lineHeight: 1.25, letterSpacing: "-0.16px", textAlign: "left", whiteSpace: "pre-line", marginTop: "2px" },
+        isPromoLabel: qtyPromoActive,
+        priceTypeBadgeStyle: M
+          ? { order: 1, alignSelf: "center", display: "inline-flex", alignItems: "center", fontSize: "10px", fontWeight: "var(--weight-bold)", letterSpacing: "0.3px", textTransform: "uppercase", color: "#8a6500", background: "rgba(203,162,88,0.16)", border: "1px solid var(--gold)", borderRadius: "var(--radius-full)", padding: "4px 10px", whiteSpace: "nowrap" }
+          : { order: 2, marginTop: "2px", alignSelf: "flex-start", display: "inline-flex", alignItems: "center", fontSize: "11px", fontWeight: "var(--weight-bold)", letterSpacing: "0.3px", textTransform: "uppercase", color: "#8a6500", background: "rgba(203,162,88,0.16)", border: "1px solid var(--gold)", borderRadius: "var(--radius-full)", padding: "5px 12px", whiteSpace: "nowrap" },
         qtyBlockStyle: M ? { order: 3, display: "flex", flexDirection: "column", gap: "4px", alignItems: "center", flex: "none" } : { order: 3, display: "flex", flexDirection: "column", gap: "4px", alignItems: "flex-start", marginTop: "18px", position: "relative", top: "16px" },
         perUnitText: n > 1 ? (fmt(Math.round(unitPrice)) + "/ед") : "\u00A0",
         perUnitSpacerTop: "\u00A0",
         perUnitStyle: M ? { fontSize: "13px", color: "var(--ink-soft)", letterSpacing: "-0.16px", whiteSpace: "nowrap", textAlign: "center", width: "100%", lineHeight: 1.3 } : { fontSize: "14px", color: "var(--ink-soft)", letterSpacing: "-0.16px", whiteSpace: "nowrap", textAlign: "center", width: "108px", lineHeight: 1.25, marginTop: "2px" },
         unitSpacerStyle: M ? { fontSize: "13px", letterSpacing: "-0.16px", whiteSpace: "nowrap", textAlign: "center", width: "100%", lineHeight: 1.3, visibility: "hidden" } : { display: "none" },
         limitedStyle: { fontSize: M ? "11px" : "13px", fontWeight: 600, color: "#8a6500", whiteSpace: "nowrap", letterSpacing: "-0.16px" },
+        qtyLocked: !!it.qtyLocked,
+        lockedPlateStyle: { width: "108px", height: "32px", boxSizing: "border-box", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid var(--border-default)", borderRadius: "var(--radius-sm)", background: "var(--surface-soft)", color: "var(--ink-soft)", fontFamily: "var(--font-body)", fontWeight: 600, fontSize: "12px", letterSpacing: "-0.16px", whiteSpace: "nowrap" },
         onQty: (v) => this.setQty(it.id, v),
         atMin: n <= QMIN,
         atMax: n >= QMAX,
@@ -802,15 +866,18 @@ class Component extends DCLogic {
     // --- итог заказа ---
     // Итоги считаются только по выбранным и не удалённым товарам.
     // Для каждой бизнес-группы отдельно копятся база и размер скидки.
-    let regBase = 0, regVolDisc = 0, regStatDisc = 0, mGoods = 0, mDisc = 0, pGoods = 0, pDisc = 0;
+    let regBase = 0, regVolDisc = 0, regStatDisc = 0, regPromoDisc = 0, mGoods = 0, mDisc = 0, pGoods = 0, pDisc = 0;
     this.catalog.forEach(g => g.items.forEach(it => {
       if (removed[it.id] || !checked[it.id]) return;
+      if (g.id === "markdown" && !showMarkdownTab) return;
+      if (g.id === "promo" && !showPromoTab) return;
       const n = q(it);
       if (g.kind === "regular") {
-        const info = priceInfoOf(it);
+        const info = priceInfoOf(it, n);
         regBase += info.base * n;
         const d = info.base * (info.apPct / 100) * n;
-        if (info.useVol) regVolDisc += d; else regStatDisc += d;
+        if (info.qtyPromo) regPromoDisc += d;
+        else if (info.useVol) regVolDisc += d; else regStatDisc += d;
       } else if (g.kind === "markdown") {
         mGoods += (it.old || it.unit) * n;
         mDisc += ((it.old || it.unit) - it.unit) * n;
@@ -824,8 +891,16 @@ class Component extends DCLogic {
     const regDiscLines = [];
     if (regStatDisc > 0) regDiscLines.push({ label: "Скидка по статусу (" + cur.name + ")", amount: neg(Math.round(regStatDisc)) });
     if (regVolDisc > 0) regDiscLines.push({ label: "Скидка за объём (" + vPct + "%)", amount: neg(Math.round(regVolDisc)) });
-    const total = (regBase - regVolDisc - regStatDisc) + (mGoods - mDisc) + (pGoods - pDisc);
-    const savings = regVolDisc + regStatDisc + mDisc + pDisc;
+    if (regPromoDisc > 0) regDiscLines.push({ label: "Скидка по акции (от 25 шт.)", amount: neg(Math.round(regPromoDisc)) });
+    const total = (regBase - regVolDisc - regStatDisc - regPromoDisc) + (mGoods - mDisc) + (pGoods - pDisc);
+    const savings = regVolDisc + regStatDisc + regPromoDisc + mDisc + pDisc;
+    // Строки «Уценённые товары»/«Товары по акции» показываем в итоге только когда
+    // соответствующая вкладка целиком отмечена галочкой и в ней есть товары.
+    const showMarkdownSummary = !!markdownG && markdownG.items.length > 0 && markdownG.items.every(it => checked[it.id]);
+    const showPromoSummary = !!promoG && promoG.items.length > 0 && promoG.items.every(it => checked[it.id]);
+    // Кнопка оформления заказа неактивна, если ни один товар нигде не выбран.
+    const anyItemChecked = enabledCatalog.some(g => g.items.some(it => !removed[it.id] && checked[it.id]));
+    const checkoutBtnStyle = { opacity: anyItemChecked ? 1 : 0.3, pointerEvents: anyItemChecked ? "auto" : "none", cursor: anyItemChecked ? "pointer" : "not-allowed", transition: "opacity 0.15s ease" };
 
     // --- допродажа ---
     // Блок допродажи отслеживает комплект из четырёх товаров:
@@ -862,7 +937,7 @@ class Component extends DCLogic {
     const upsellCount = upsell.filter(u => u.added).length;
     const upsellComplete = upsellCount >= 4;
     const upsellBarFillStyle = { height: "100%", width: (Math.min(1, upsellCount / 4) * 100) + "%", background: "var(--green-accent)", borderRadius: "999px", transition: "width 0.45s cubic-bezier(0.25,0.46,0.45,0.94), background 0.3s ease" };
-    const totalPositions = this.catalog.reduce((a, g) => a + g.items.filter(it => !removed[it.id]).length, 0);
+    const totalPositions = enabledCatalog.reduce((a, g) => a + g.items.filter(it => !removed[it.id]).length, 0);
 
     // --- служебный переключатель статуса мастера ---
     // Временный селектор статуса нужен для проверки расчётов разных уровней мастера.
@@ -880,16 +955,20 @@ class Component extends DCLogic {
     const badgeIconStyle = { color: badgeIconColor, flex: "none", display: "block" };
     const statusBadges = (cur.badges || []).map((b, i) => {
       const key = "badge-" + i;
+      const hasTip = !!b.tip;
+      const small = !!b.short;
       return {
         t: b.t,
         tip: b.tip || "",
-        hasTip: !!b.tip,
-        open: openTip === key,
+        hasTip,
+        open: hasTip && openTip === key,
         iconStyle: badgeIconStyle,
-        wrapStyle: { position: "relative", zIndex: openTip === key ? 80 : 1, display: "inline-flex", alignItems: "center", gap: "7px", whiteSpace: "nowrap", fontSize: "var(--text-micro)", fontWeight: "var(--weight-bold)", letterSpacing: "0.3px", textTransform: "uppercase", color: "var(--on-dark)", border: "1px solid " + (isMaster ? "#FFFFFF" : "var(--gold)"), borderRadius: "var(--radius-full)", padding: "5px 13px", cursor: b.tip ? "pointer" : "default" },
-        onEnter: () => this.setState({ openTip: key }),
-        onLeave: () => this.setState({ openTip: null }),
-        onToggle: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(s => ({ openTip: s.openTip === key ? null : key })); },
+        tipStyle: small ? { ...badgeTipStyle, width: M ? "170px" : "200px", padding: "10px 12px", borderRadius: "10px" } : badgeTipStyle,
+        tipTextStyle: small ? { ...badgeTipTextStyle, fontSize: "13px" } : badgeTipTextStyle,
+        wrapStyle: { position: "relative", zIndex: (hasTip && openTip === key) ? 80 : 1, display: "inline-flex", alignItems: "center", gap: "7px", whiteSpace: "nowrap", fontSize: "var(--text-micro)", fontWeight: "var(--weight-bold)", letterSpacing: "0.3px", textTransform: "uppercase", color: "var(--on-dark)", border: "1px solid " + (isMaster ? "#FFFFFF" : "var(--gold)"), borderRadius: "var(--radius-full)", padding: "5px 13px", cursor: hasTip ? "pointer" : "default" },
+        onEnter: hasTip ? (() => this.setState({ openTip: key })) : (() => {}),
+        onLeave: hasTip ? (() => this.setState({ openTip: null })) : (() => {}),
+        onToggle: hasTip ? ((e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState(s => ({ openTip: s.openTip === key ? null : key })); }) : (() => {}),
       };
     });
     // Подсказка для мобильной пилюли «Цены Мастера (ЦМ)»
@@ -910,18 +989,31 @@ class Component extends DCLogic {
       volumeOuterStyle, volumeStatusCellStyle, volumeTiersWrapStyle,
       volTipOpen, volTipWrapStyle, volTipStyle, volTipTextStyle, volTipLinkStyle, volTipArrowStyle, volTipBridgeStyle,
       onVolTipEnter, onVolTipLeave, onVolTipToggle, stopProp,
-      tabsSectionStyle, tabsCardStyle, tabsRowStyle,
+      tabsSectionStyle, tabsCardStyle, tabsRowStyle, showTabsRow,
+      showMarkdownTab, showPromoTab, onToggleMarkdownTab, onTogglePromoTab,
+      devToggleLabelStyle: { display: "inline-flex", alignItems: "center", gap: "6px", cursor: "pointer" },
+      devToggleInputStyle: { cursor: "pointer" },
       upsellCardStyle, upsellHeaderStyle, upsellH2Style, upsellDescStyle, upsellGridStyle, upsellProgressWrapStyle,
       totalPositions,
       tabs,
-      showVolumeBar: activeGroup === "regular",
-      showTabBody: activeGroup !== "regular",
+      showVolumeBar: activeG.id === "regular",
+      showTabBody: activeG.id !== "regular",
       volumeStatusText,
       volumeSegments,
       qtyInputStyle,
       regDiscLines,
       rows,
       isEmpty: activeG.items.length === 0,
+      showMarkdownSummary,
+      showPromoSummary,
+      checkoutBtnStyle,
+      anyItemChecked,
+      checkoutHintStyle: { display: "block", marginTop: "10px", fontFamily: "var(--font-body)", fontWeight: 400, fontSize: "13px", lineHeight: 1.4, letterSpacing: "-0.16px", color: "var(--ink-soft)", textAlign: "center" },
+      showPromoNotice: !!(promoG && promoG.items.length > 0),
+      promoNoticeStyle: { display: "flex", alignItems: "center", gap: "12px", background: "var(--surface-soft)", borderRadius: "var(--radius-md)", padding: M ? "14px 16px" : "16px 18px" },
+      promoNoticeIconStyle: { width: "28px", height: "28px", flex: "none", display: "block" },
+      promoNoticeTextStyle: { fontFamily: "var(--font-body)", fontWeight: 400, fontSize: "14px", lineHeight: 1.4, letterSpacing: "-0.16px", color: "var(--ink-soft)" },
+      promoNoticeLinkStyle: { color: "var(--ink-soft)", textDecoration: "underline", fontWeight: 600 },
       showUpsell: this.props.showUpsell ?? true,
       upsell,
       upsellCount,
