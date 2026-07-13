@@ -171,12 +171,25 @@ body { margin: 0; background: var(--canvas-warm); }
 img { display: block; }
 
 /* --- Компоненты, перенесённые из _ds_bundle.js: Alert (info) и Button (primary, lg) --- */
-.ds-alert-info { display:flex;align-items:flex-start;gap:12px;background:var(--canvas);border:1px solid var(--green-light);border-left:3px solid var(--green-house);border-radius:var(--radius-sm);padding:14px 16px; }
-.ds-alert-icon { flex:none;margin-top:1px;color:var(--green-house); }
+.ds-alert-info { display:flex;align-items:center;gap:12px;background:var(--canvas);border-left:3px solid #158F45;border-radius:var(--radius-sm);box-shadow:0 1px 3px rgba(0,0,0,0.24), 0 2px 14px rgba(21,143,69,0.16);padding:14px 16px; }
+.ds-alert-icon { flex:none;color:var(--green-house); }
 .ds-alert-body { flex:1;font-family:var(--font-ui);font-size:var(--text-body-sm);color:var(--text-muted);line-height:1.45; }
 .ds-btn-primary-lg { display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);width:100%;padding:14px 32px;font-family:var(--font-ui);font-weight:var(--weight-semibold);font-size:var(--text-body);letter-spacing:var(--tracking-normal);line-height:var(--leading-compact);background:var(--green-uplift);color:var(--on-dark);border:1px solid var(--green-uplift);border-radius:var(--radius-sm);cursor:pointer;transform:scale(1);box-shadow:none;transition:transform var(--duration-fast) ease,background var(--duration-fast) ease,border-color var(--duration-fast) ease,box-shadow var(--duration-fast) ease;-webkit-tap-highlight-color:transparent; }
 .ds-btn-primary-lg:hover { background:var(--green-accent);border-color:var(--green-accent);box-shadow:0 4px 8px 0 rgba(51,161,104,0.35); }
 .ds-btn-primary-lg:active { transform:scale(var(--press-scale)); }
+
+/* --- Инпуты попапа оформления заказа --- */
+.co-input::placeholder { color:var(--ink-faint); }
+.co-input:focus { border-color:#00754A !important; box-shadow:0 0 0 3px #F1F8F5 !important; }
+.co-noreg-btn:not(:disabled):hover { background:rgba(21,143,69,0.2) !important; color:#158F45 !important; border-color:#158F45 !important; }
+.co-noreg-btn:not(:disabled):active { transform:scale(0.98); }
+.co-confirm-btn:not(:disabled):hover { background:var(--green-primary) !important; border-color:var(--green-primary) !important; box-shadow:0 4px 8px 0 rgba(51,161,104,0.25); }
+.co-confirm-btn:not(:disabled):active { transform:scale(0.98); }
+.co-modal-close:hover { background:#edebe9 !important; }
+.co-modal-close:active { transform:scale(0.92); }
+.co-alert-close { flex:none;align-self:center;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;margin-left:auto;border:none;background:transparent;border-radius:var(--radius-sm);color:var(--ink-soft);cursor:pointer;transition:background 0.15s ease,transform 0.12s ease; }
+.co-alert-close:hover { background:#edebe9; }
+.co-alert-close:active { transform:scale(0.92); }
 
 /* --- Cart page utility classes --- */
 .u-style-1 { display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px; }
@@ -221,7 +234,7 @@ img { display: block; }
 .u-style-40 { height:8px;border-radius:var(--radius-full);background:var(--ceramic);overflow:hidden; }
 .u-style-41 { flex:1;min-width:0;display:flex;flex-direction:column;gap:1px; }
 .u-style-42 { font-family:var(--font-heading);font-weight:var(--weight-semibold);font-size:14px;letter-spacing:var(--tracking-tight);color:var(--ink); }
-.u-style-43 { background:var(--surface-card);border-radius:var(--radius-md);box-shadow:var(--shadow-card);padding:26px; }
+.u-style-43 { background:var(--surface-card);border-radius:var(--radius-xs);box-shadow:var(--shadow-card);padding:26px; }
 .u-style-44 { font-family:var(--font-heading);font-weight:var(--weight-bold);font-size:var(--text-micro);letter-spacing:var(--tracking-looser);text-transform:uppercase;color:var(--green-primary);margin:0 0 20px; }
 .u-style-45 { display:flex;flex-direction:column;gap:18px; }
 .u-style-46 { display:flex;flex-direction:column;gap:7px; }
